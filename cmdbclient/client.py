@@ -5,8 +5,6 @@ import sys
 import platform
 import socket
 print os.environ
-print platform.platform()
-print platform.system()
 class get_system_info(object):
     def __init__(self):
         self.ip=None
