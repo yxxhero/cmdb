@@ -1,37 +1,67 @@
 #!/usr/bin/env python2.7
-#coding:utf-8
-import os
-import sys
+# coding:utf-8
+import os,sys
+import psutil
 import platform
 import socket
-print os.environ
-class get_system_info(object):
-    def __init__(self):
-        self.ip=None
-        self.system_type_info=None
-        self.services=[]
-        self.hostname=''
-        self.system_info={}
-    def ip_info(self):
-        tempSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        tempSock.connect(('8.8.8.8', 80))
-        addr = tempSock.getsockname()[0]
-        tempSock.close()
-        self.ip = addr
-        return self.ip
-    def system_type(self):
-        self.system_type_info=platform.platform()
-        return self.system_type_info
-    def hostname_info(self):
-        self.hostname=os.environ['HOSTNAME']
-        return self.hostname
-    def systeminfo(self):
-        self.system_info['ip']=self.ip_info()
-        self.system_info['systemtype']=self.system_type()
-        self.system_info['hostname']=self.hostname_info()
-        return self.system_info
-if __name__=='__main__':
-    client=get_system_info()
-    print client.systeminfo()
-        
-    
+
+class system_info(object):
+	def __init__(self):
+		self.system_info = {}
+
+		self.hostname = ''
+		self.ip_dict = {}
+		self.cpu_info = {}
+		self.process_info = {}
+		self.mem_info = {}
+
+	def get_mem_info(self):
+		self.mem_info['total'] = psutil.virtual_memory().total/1024/1024
+		self.mem_info['available'] = psutil.virtual_memory().available/1024/1024
+		self.mem_info['used'] = psutil.virtual_memory().used/1024/1024
+		self.mem_info['free'] = psutil.virtual_memory().free/1024/1024
+		self.mem_info['active'] = psutil.virtual_memory().active/1024/1024
+		self.mem_info['inactive'] = psutil.virtual_memory().inactive/1024/1024
+		self.mem_info['buffers'] = psutil.virtual_memory().buffers/1024/1024
+		self.mem_info['cached'] = psutil.virtual_memory().cached/1024/1024
+		self.mem_info['shared'] = psutil.virtual_memory().shared/1024/1024
+		return self.mem_info
+
+	def get_process_info():
+		pass
+
+	def get_hostname(self):
+		self.hostname=socket.gethostname()
+		return self.hostname
+
+	def get_ip_dict(self):
+		if platform.system() == 'Linux':
+			for line in os.popen("ip add | grep \"scope global\" ").readlines():
+				device = line.split()[-1]
+				ip = line.split()[1]
+				self.ip_dict[device] = ip
+		if platform.system() == 'Windows':
+			adapter_num = 0
+			for ip in socket.gethostbyname_ex(socket.gethostname())[2]:
+				adapter_num = adapter_num + 1
+				device = "adapter"+str(adapter_num)
+				self.ip_dict[device] = ip
+		return self.ip_dict
+	
+	def get_cpu_info(self):
+		self.cpu_info['logical_cores'] = psutil.cpu_count()
+		self.cpu_info['physical_cores'] = psutil.cpu_count(logical = False)
+		return self.cpu_info
+
+	def get_system_info(self):
+		self.system_info['hostname'] = self.get_hostname()
+		self.system_info['ip_dict'] = self.get_ip_dict()
+		self.system_info['cpu_info'] = self.get_cpu_info()
+		self.system_info['mem_info'] = self.get_mem_info()
+		return self.system_info
+
+if __name__ == '__main__':
+	client = system_info()
+	for key,item in  client.get_system_info().items():
+		print key,"\t----->",item
+
