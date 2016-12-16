@@ -4,6 +4,8 @@
 <meta charset="utf-8" />
 <title>Cmdb | Web Application</title>
 <meta name="description" content="app, web app, responsive, admin dashboard, admin, flat, flat ui, ui kit, off screen nav" />
+<link rel="shortcut icon" href="/static/images/favicon.ico"/>
+<link rel="bookmark" href="/static/images/favicon.ico"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <link rel="stylesheet" href="/static/css/app.v2.css" type="text/css" />
 <link rel="stylesheet" href="/static/css/font.css" type="text/css" cache="false" />
@@ -14,7 +16,7 @@
   <div class="container aside-xxl"> <a class="navbar-brand block" href="/index">Cmdb</a>
     <section class="panel panel-default m-t-lg bg-white">
       <header class="panel-heading text-center"> <strong>Sign up</strong> </header>
-      <form action="index.html" class="panel-body wrapper-lg">
+      <form action="/register/" class="panel-body wrapper-lg"  method="post">
         <div class="form-group">
           <label class="control-label">Name</label>
            {{user.Name}} 
@@ -27,15 +29,10 @@
           <label class="control-label">Password</label>
           {{user.Password}}
         </div>
-        <div class="checkbox">
-          <label>
-            <input type="checkbox">
-            Agree the <a href="#">terms and policy</a> </label>
-        </div>
         <button type="submit" class="btn btn-primary">Sign up</button>
         <div class="line line-dashed"></div>
         <p class="text-muted text-center"><small>Already have an account?</small></p>
-        <a href="/login" class="btn btn-default btn-block">Sign in</a>
+        <a href="/login/" class="btn btn-default btn-block">Sign in</a>
       </form>
     </section>
   </div>
