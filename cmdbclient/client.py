@@ -17,6 +17,32 @@ class system_info(object):
 		self.architecture = ''
 		self.process_info = {}
 		self.mem_info = {}
+		self.disk_info = {}
+	
+	def get_disk_info(self):
+		disks=psutil.disk_partitions()
+		tmp_disk_detail = {}
+		for disk in disks:
+		    device = disk[0]
+		    tmp_disk_detail["mount_point"] = disk[1]
+		    tmp_disk_detail["fs_type"] = disk[2]
+		    tmp_disk_detail["mount_options"] = disk[3]
+		    tmp_disk_detail["total"] = psutil.disk_usage(disk[1])[0]/1024/1024
+		    tmp_disk_detail["used"] = psutil.disk_usage(disk[1])[1]/1024/1024
+		    tmp_disk_detail["free"] = psutil.disk_usage(disk[1])[2]/1024/1024
+		    tmp_disk_detail["percent"] = psutil.disk_usage(disk[1])[3]/1024/1024
+		    self.disk_info[device] = tmp_disk_detail
+
+		self.disk_info["total_read_count"] = psutil.disk_io_counters()[0]
+		self.disk_info["total_write_count"] = psutil.disk_io_counters()[1]
+		self.disk_info["total_read_bytes"] = psutil.disk_io_counters()[2]/1024/1024
+		self.disk_info["total_write_bytes"] = psutil.disk_io_counters()[3]/1024/1024
+		self.disk_info["total_read_time"] = psutil.disk_io_counters()[4]
+		self.disk_info["total_write_time"] = psutil.disk_io_counters()[5]
+		self.disk_info["total_read_merged_count"] = psutil.disk_io_counters()[6]
+		self.disk_info["total_write_merged_count"] = psutil.disk_io_counters()[7]
+		self.disk_info["total_busy_time"] = psutil.disk_io_counters()[8]
+		return self.disk_info
 
 	def get_kernel_info(self):
 		self.kernel_info = commands.getstatusoutput("uname -r")[1]
@@ -44,6 +70,7 @@ class system_info(object):
 
 	def get_process_info():
 		pass
+		
 
 	def get_hostname(self):
 		self.hostname=socket.gethostname()
@@ -66,6 +93,7 @@ class system_info(object):
 	def get_cpu_info(self):
 		self.cpu_info['logical_cores'] = psutil.cpu_count()
 		self.cpu_info['physical_cores'] = psutil.cpu_count(logical = False)
+		self.cpu_info["cpu_usage"] = psutil.cpu_percent()
 		return self.cpu_info
 
 	def get_system_info(self):
@@ -76,6 +104,7 @@ class system_info(object):
 		self.system_info['kernel_info'] = self.get_kernel_info()
 		self.system_info['system_name'] = self.get_system_name()
 		self.system_info['architecture'] = self.get_architecture()
+		self.system_info['disk_info'] = self.get_disk_info()
 		return self.system_info
 
 if __name__ == '__main__':
