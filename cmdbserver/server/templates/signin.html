@@ -16,14 +16,14 @@
   <div class="container aside-xxl"> <a class="navbar-brand block" href="/index">Cmdb</a>
     <section class="panel panel-default bg-white m-t-lg">
       <header class="panel-heading text-center"> <strong>Sign in</strong> </header>
-      <form action="index.html" class="panel-body wrapper-lg">
+      <form action="/signin/" class="panel-body wrapper-lg" method='post'>
         <div class="form-group">
-          <label class="control-label">Email</label>
-          <input type="email" placeholder="test@example.com" class="form-control input-lg">
+          <label class="control-label">Name</label>
+          <input type="text" name="Name" placeholder="username" class="form-control input-lg">
         </div>
         <div class="form-group">
           <label class="control-label">Password</label>
-          <input type="password" id="inputPassword" placeholder="Password" class="form-control input-lg">
+          <input type="password" name="Password" id="inputPassword" placeholder="Password" class="form-control input-lg">
         </div>
         <div class="checkbox">
           <label>
@@ -35,7 +35,7 @@
         <div class="line line-dashed"></div>
         <div class="line line-dashed"></div>
         <p class="text-muted text-center"><small>Do not have an account?</small></p>
-        <a href="/register" class="btn btn-default btn-block">Create an account</a>
+        <a href="/register/" class="btn btn-default btn-block">Create an account</a>
       </form>
     </section>
   </div>

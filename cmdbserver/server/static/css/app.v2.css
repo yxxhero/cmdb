@@ -10109,6 +10109,9 @@ filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#0028323c', end
 .no-touch .hover-action {
 	display:none;
 }
+.warning {
+color:red;
+}
 .no-touch .hover:hover .hover-action {
 	display:inherit;
 }
