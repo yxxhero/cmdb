@@ -18,7 +18,7 @@
       <li class="dropdown"> <a href="#" class="dropdown-toggle dker" data-toggle="dropdown"> <i class="fa fa-building-o"></i> <span class="font-bold">Activity</span> </a>
         <section class="dropdown-menu aside-xl on animated fadeInLeft no-borders lt">
           <div class="wrapper lter m-t-n-xs"> <a href="#" class="thumb pull-left m-r"> <img src="/static/images/avatar.jpg" class="img-circle"> </a>
-            <div class="clear"> <a href="#"><span class="text-white font-bold">@Mike Mcalidek</a></span> <small class="block">Art Director</small> <a href="#" class="btn btn-xs btn-success m-t-xs">Upgrade</a> </div>
+            <div class="clear"> <a href="#"><span class="text-white font-bold">{{username}}</a></span> <small class="block">Art Director</small> <a href="#" class="btn btn-xs btn-success m-t-xs">Upgrade</a> </div>
           </div>
           <div class="row m-l-none m-r-none m-b-n-xs text-center">
             <div class="col-xs-4">
@@ -61,7 +61,7 @@
           </section>
         </section>
       </li>
-      <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <span class="thumb-sm avatar pull-left"> <img src="/static/images/avatar.jpg"> </span> John.Smith <b class="caret"></b> </a>
+      <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <span class="thumb-sm avatar pull-left"> <img src="/static/images/avatar.jpg"> </span>{{username}}<b class="caret"></b> </a>
         <ul class="dropdown-menu animated fadeInRight">
           <span class="arrow top"></span>
           <li> <a href="#">Settings</a> </li>
@@ -69,7 +69,7 @@
           <li> <a href="#"> <span class="badge bg-danger pull-right">3</span> Notifications </a> </li>
           <li> <a href="docs.html">Help</a> </li>
           <li class="divider"></li>
-          <li> <a href="modal.lockme.html" data-toggle="ajaxModal" >Logout</a> </li>
+          <li> <a href="/logout/">Logout</a> </li>
         </ul>
       </li>
     </ul>
