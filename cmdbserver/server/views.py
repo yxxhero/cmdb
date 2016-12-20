@@ -18,7 +18,8 @@ def checklogin(func):
 ######################################################################
 @checklogin        
 def index(request):
-    return render_to_response("index.html")    
+    username=request.session['login_info']['username']
+    return render_to_response("index.html",{'username':username})
 def login(request):
     return render_to_response("signin.html")
 def register(request):
@@ -62,3 +63,7 @@ def signin(request):
             return render_to_response('signin.html',{'message':"用户名或密码错误"})
     else:
         return render_to_response('signin.html')
+def logout(request):
+    del request.session['login_info']
+    return render_to_response('signin.html')
+
