@@ -109,7 +109,7 @@ class system_info(object):
 		return self.system_info
 
 if __name__ == '__main__':
-	config_file = "./cmdbclient.conf"
+	config_file = "./etc/cmdbclient.conf"
 	config = ConfigObj(config_file,encoding='UTF8')
 	print config['server']
 	print config['server']['server_name']
