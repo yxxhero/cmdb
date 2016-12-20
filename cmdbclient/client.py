@@ -4,6 +4,7 @@ import os,sys,commands
 import psutil
 import platform
 import socket
+from configobj import ConfigObj
 
 class system_info(object):
 	def __init__(self):
@@ -108,6 +109,11 @@ class system_info(object):
 		return self.system_info
 
 if __name__ == '__main__':
+	config_file = "./cmdbclient.conf"
+	config = ConfigObj(config_file,encoding='UTF8')
+	print config['server']
+	print config['server']['server_name']
+
 	print
 	print
 	client = system_info()
