@@ -106,7 +106,11 @@ class system_info(object):
         self.system_info['disk_info'] = self.get_disk_info()
         return self.system_info
     def post_system_info(self,url,data):
-        pass
+        format_data=urllib.urlencode(data)
+        req=urllib2.Request(url,format_data)
+        response=urllib2.urlopen(req)
+        content=response.read()
+        return content
 		
 if __name__ == '__main__':
     config_file = "./etc/cmdbclient.conf"
@@ -119,5 +123,5 @@ if __name__ == '__main__':
     client = system_info()
     for key,item in  client.get_system_info().items():
         print key,"\t----->",item
-        print
-        print
+    print
+    print
