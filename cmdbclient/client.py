@@ -134,10 +134,6 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='cmdbclient')
     parser.add_argument('action',choices=['start','restart','stop','run'],default='start',type=str,help='指定操作类型，包括start、stop、restart、run，其中除了run以外其他三个操作程序将以守护进程运行')
     args=parser.parse_args()
-    if len(sys.argv) == 1:
-        print sys.argv[0]+" start|stop|restart|run"
-    elif len(sys.argv) == 2:
-        arg = sys.argv[1]
-        if arg in ('start', 'stop', 'restart'):
-            d = pantalaimon('/var/lib/cmdb.pid', verbose=0)
-            getattr(d, arg)()
+    action=args.action
+    d = pantalaimon('/var/lib/cmdb.pid', verbose=0)
+    getattr(d, action)()
