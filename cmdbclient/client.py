@@ -115,13 +115,11 @@ class system_info(object):
 if __name__ == '__main__':
     config_file = "./etc/cmdbclient.conf"
     config = ConfigObj(config_file,encoding='UTF8')
-    print config['server']
-    print config['server']['server_name']
-
-    print
-    print
+    host=config['server']['server_host']
+    port=config['server']['server_port']
+    uri=config['server']['uri']
+    url='http://'+host+':'+port+uri
+    print url
     client = system_info()
-    for key,item in  client.get_system_info().items():
-        print key,"\t----->",item
-    print
-    print
+    data=client.get_system_info()
+    client.post_system_info(url,data)
