@@ -132,7 +132,7 @@ class pantalaimon(Daemon):
 #            client.post_system_info(url,data)
 if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='cmdbclient')
-    parser.add_argument('action',choices=['start','restart','stop','run'],default='start',type=str,help='指定操作类型，包括start、stop、restart、run，其中除了run以外其他三个操作程序将以守护进程运行')
+    parser.add_argument('action',choices=['start','restart','stop','run'],default='start',type=str,help='指定操作类型')
     args=parser.parse_args()
     action=args.action
     d = pantalaimon('/var/lib/cmdb.pid', verbose=0)
