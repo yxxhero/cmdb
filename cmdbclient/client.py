@@ -7,6 +7,7 @@ import socket
 import urllib
 import urllib2
 import time
+import argparse
 from configobj import ConfigObj
 from daemon import Daemon
 
@@ -130,6 +131,9 @@ class pantalaimon(Daemon):
 #            data=client.get_system_info()
 #            client.post_system_info(url,data)
 if __name__=='__main__':
+    parser = argparse.ArgumentParser(prog='cmdbclient')
+    parser.add_argument('action',choices=['start','restart','stop','run'],default='start',type=str,help='指定操作类型，包括start、stop、restart、run，其中除了run以外其他三个操作程序将以守护进程运行')
+    args=parser.parse_args()
     if len(sys.argv) == 1:
         print sys.argv[0]+" start|stop|restart|run"
     elif len(sys.argv) == 2:
