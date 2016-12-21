@@ -4,9 +4,12 @@ import os,sys,commands
 import psutil
 import platform
 import socket
-from configobj import ConfigObj
 import urllib
 import urllib2
+import time
+from configobj import ConfigObj
+from daemon import Daemon
+
 class system_info(object):
     def __init__(self):
         self.system_info = {}
@@ -112,14 +115,25 @@ class system_info(object):
         content=response.read()
         return content
 		
-if __name__ == '__main__':
-    config_file = "./etc/cmdbclient.conf"
-    config = ConfigObj(config_file,encoding='UTF8')
-    host=config['server']['server_host']
-    port=config['server']['server_port']
-    uri=config['server']['uri']
-    url='http://'+host+':'+port+uri
-    print url
-    client = system_info()
-    data=client.get_system_info()
-    client.post_system_info(url,data)
+class pantalaimon(Daemon):
+    def run(self):
+        while True:
+            config_file = "./etc/cmdbclient.conf"
+            config = ConfigObj(config_file,encoding='UTF8')
+            host=config['server']['server_host']
+            port=config['server']['server_port']
+            uri=config['server']['uri']
+            url='http://'+host+':'+port+uri
+            print url
+            time.sleep(2)
+#            client = system_info()
+#            data=client.get_system_info()
+#            client.post_system_info(url,data)
+if __name__=='__main__':
+    if len(sys.argv) == 1:
+        print sys.argv[0]+" start|stop|restart|run"
+    elif len(sys.argv) == 2:
+        arg = sys.argv[1]
+        if arg in ('start', 'stop', 'restart'):
+            d = pantalaimon('/var/lib/cmdb.pid', verbose=0)
+            getattr(d, arg)()
