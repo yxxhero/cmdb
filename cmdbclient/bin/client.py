@@ -9,9 +9,11 @@ import urllib2
 import time
 import argparse
 from configobj import ConfigObj
+
 base_config = ConfigObj('../etc/cmdbclient.conf',encoding='UTF8')
 cmdbdir=base_config['client']['cmdb_dir']
 sys.path.append(cmdbdir)
+
 from modules.daemon import Daemon
 class system_info(object):
     def __init__(self):
@@ -126,9 +128,10 @@ class pantalaimon(Daemon):
             host=config['server']['server_host']
             port=config['server']['server_port']
             uri=config['server']['uri']
+            interval=config['client']['interval']
             url='http://'+host+':'+port+uri
             print url
-            time.sleep(2)
+            time.sleep(int(interval))
 #            client = system_info()
 #            data=client.get_system_info()
 #            client.post_system_info(url,data)
