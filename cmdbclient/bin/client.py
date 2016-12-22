@@ -9,8 +9,8 @@ import urllib2
 import time
 import argparse
 from configobj import ConfigObj
-
-base_config = ConfigObj('../etc/cmdbclient.conf',encoding='UTF8')
+base_conf='/opt/cmdb/cmdbclient/etc/cmdbclient.conf'
+base_config = ConfigObj(base_conf,encoding='UTF8')
 cmdbdir=base_config['client']['cmdb_dir']
 sys.path.append(cmdbdir)
 
@@ -123,7 +123,7 @@ class system_info(object):
 class pantalaimon(Daemon):
     def run(self):
         while True:
-            config_file = "../etc/cmdbclient.conf"
+            config_file = "/opt/cmdb/cmdbclient/etc/cmdbclient.conf"
             config = ConfigObj(config_file,encoding='UTF8')
             host=config['server']['server_host']
             port=config['server']['server_port']
