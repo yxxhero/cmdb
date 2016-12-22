@@ -1,9 +1,6 @@
 #!/usr/bin/env python2.7
 # coding:utf-8
 import os,sys,commands
-#base_dir=os.path.dirname(os.path.dirname(__file__))
-sys.path.append('..')
-print sys.path
 import psutil
 import platform
 import socket
@@ -12,8 +9,10 @@ import urllib2
 import time
 import argparse
 from configobj import ConfigObj
+base_config = ConfigObj('../etc/cmdbclient.conf',encoding='UTF8')
+cmdbdir=base_config['client']['cmdb_dir']
+sys.path.append(cmdbdir)
 from modules.daemon import Daemon
-
 class system_info(object):
     def __init__(self):
         self.system_info = {}
