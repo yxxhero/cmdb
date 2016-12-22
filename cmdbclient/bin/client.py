@@ -132,9 +132,11 @@ class pantalaimon(Daemon):
             url='http://'+host+':'+port+uri
             print url
             time.sleep(int(interval))
-#            client = system_info()
-#            data=client.get_system_info()
-#            client.post_system_info(url,data)
+            client = system_info()
+            data={"host_info":client.get_system_info()}
+            print data
+            result=client.post_system_info(url,data)
+            print result
 if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='cmdbclient')
     parser.add_argument('action',choices=['start','restart','stop','run'],default='start',type=str,help='指定操作类型')

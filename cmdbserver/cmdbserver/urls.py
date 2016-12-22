@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from server.views import index,login,register,signin,logout
+from server.views import index,login,register,signin,logout,posthostinfo
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$',index),
@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^register/',register),
     url(r'^signin/',signin),
     url(r'^logout/',logout),
+    url(r'^posthostinfo/',posthostinfo),
 ]

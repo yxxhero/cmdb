@@ -66,4 +66,7 @@ def signin(request):
 def logout(request):
     del request.session['login_info']
     return render_to_response('signin.html')
-
+def posthostinfo(request):
+    host_info=request.POST.get('host_info',None)
+    print host_info
+    return HttpResponse('ok') 
