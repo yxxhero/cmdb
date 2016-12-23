@@ -1,5 +1,6 @@
 #!/usr/bin/env python2.7
 # coding:utf-8
+from __future__ import print_function
 import commands
 import sys
 import os
@@ -14,7 +15,6 @@ import atexit
 import errno
 import signal
 from configobj import ConfigObj
-from __future__ import print_function
 class Daemon(object):
     """
     A generic daemon class.
@@ -193,12 +193,12 @@ class Daemon(object):
 
         self.log("Stopped")
 
-    def restart(self):
+    def restart(self,*args, **kwargs):
         """
         Restart the daemon
         """
         self.stop()
-        self.start()
+        self.start(*args, **kwargs)
 
     def get_pid(self):
         try:
@@ -209,6 +209,7 @@ class Daemon(object):
             pid = None
         except SystemExit:
             pid = None
+        self.log('pid %d' % pid)
         return pid
 
     def is_running(self):
@@ -337,27 +338,39 @@ class system_info(object):
         return content
 		
 class pantalaimon(Daemon):
-    def run(self):
+    def run(self,client,url,interval):
         while True:
-            config_file = "/opt/cmdb/cmdbclient/etc/cmdbclient.conf"
-            config = ConfigObj(config_file,encoding='UTF8')
-            host=config['server']['server_host']
-            port=config['server']['server_port']
-            uri=config['server']['uri']
-            interval=config['client']['interval']
-            url='http://'+host+':'+port+uri
-            print url
-            time.sleep(int(interval))
-            client = system_info()
-            data={"host_info":client.get_system_info()}
-            print data
-            result=client.post_system_info(url,data)
-            print result
+            data=client.get_system_info()
+            post_data={'host_info':data}
+            client.post_system_info(url,post_data)
+            time.sleep(interval)
+            
 if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='cmdbclient')
-    parser.add_argument('action',choices=['start','restart','stop','run'],default='start',type=str,help='指定操作类型')
-    parser.add_argument('-c',type=str,help='指定配置文件')
+    parser.add_argument('action',choices=['start','restart','stop','run','status','getpid'],default='start',type=str,help='指定操作类型')
+    parser.add_argument('--config',type=str,help='指定配置文件')
     args=parser.parse_args()
     action=args.action
-    d = pantalaimon('/var/lib/cmdb.pid', verbose=1)
-    getattr(d, action)()
+    config_file=args.config
+    config=ConfigObj(config_file,encoding='UTF8')
+    interval=int(config['client']['interval'])
+    host=config['server']['server_host']
+    port=config['server']['server_port']
+    uri=config['server']['uri']
+    url='http://'+host+':'+port+uri
+    pid=config['client']['pid']
+    cmdbdaemon = pantalaimon(pid, verbose=1)
+    client_info=system_info()
+    args_dic={'url':url,'client':client_info,'interval':interval}
+    if action == 'start':
+        cmdbdaemon.start(**args_dic)
+    elif action == 'restart':
+        cmdbdaemon.restart(**args_dic)
+    elif action == 'stop':
+        cmdbdaemon.stop()
+    elif action == 'run':
+        cmdbdaemon.run(**args_dic)
+    elif action == 'status':
+        cmdbdaemon.is_running()
+    elif action == 'getpid':
+        cmdbdaemon.get_pid()
