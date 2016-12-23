@@ -10,3 +10,13 @@ class userinfo(models.Model):
     Is_admin=models.BooleanField(default=0)
     Createtime=models.DateTimeField(auto_now_add=True)
     Updatetime=models.DateTimeField(auto_now = True)
+class hostinfo(models.Model):
+    hostname=models.CharField(max_length=255)
+    ip=models.GenericIPAddressField()
+    minionid=models.CharField(max_length=255,null=True)
+    system=models.CharField(max_length=255)
+    project=models.CharField(max_length=255)
+    location=models.CharField(max_length=255,null=True)
+    services=models.CharField(max_length=255,null=True)
+    Createtime=models.DateTimeField(auto_now_add=True)
+    Updatetime=models.DateTimeField(auto_now = True)
