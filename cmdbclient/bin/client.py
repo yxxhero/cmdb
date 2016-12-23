@@ -209,7 +209,6 @@ class Daemon(object):
             pid = None
         except SystemExit:
             pid = None
-        self.log('pid %d' % pid)
         return pid
 
     def is_running(self):
@@ -238,9 +237,7 @@ class system_info(object):
         self.hostname = ''
         self.ip_dict = {}
         self.cpu_info = {}
-        self.kernel_info = ''
         self.system_name = ''
-        self.architecture = ''
         self.process_info = {}
         self.mem_info = {}
         self.disk_info = {}
@@ -258,28 +255,11 @@ class system_info(object):
             tmp_disk_detail["free"] = psutil.disk_usage(disk[1])[2]/1024/1024
             tmp_disk_detail["percent"] = psutil.disk_usage(disk[1])[3]/1024/1024
             self.disk_info[device] = tmp_disk_detail
-            self.disk_info["total_read_count"] = psutil.disk_io_counters()[0]
-            self.disk_info["total_write_count"] = psutil.disk_io_counters()[1]
-            self.disk_info["total_read_bytes"] = psutil.disk_io_counters()[2]/1024/1024
-            self.disk_info["total_write_bytes"] = psutil.disk_io_counters()[3]/1024/1024
-            self.disk_info["total_read_time"] = psutil.disk_io_counters()[4]
-            self.disk_info["total_write_time"] = psutil.disk_io_counters()[5]
-            self.disk_info["total_read_merged_count"] = psutil.disk_io_counters()[6]
-            self.disk_info["total_write_merged_count"] = psutil.disk_io_counters()[7]
-            self.disk_info["total_busy_time"] = psutil.disk_io_counters()[8]
         return self.disk_info
     
-    def get_kernel_info(self):
-        self.kernel_info = commands.getstatusoutput("uname -r")[1]
-        return self.kernel_info
-
     def get_system_name(self):
-        self.system_name = commands.getstatusoutput("uname -o")[1]
+        self.system_name =platform.platform() 
         return self.system_name
-	
-    def get_architecture(self):
-        self.architecture= commands.getstatusoutput("uname -m")[1]
-        return self.architecture
 
     def get_mem_info(self):
         self.mem_info['total'] = psutil.virtual_memory().total/1024/1024
@@ -293,8 +273,15 @@ class system_info(object):
         self.mem_info['shared'] = psutil.virtual_memory().shared/1024/1024
         return self.mem_info
 
-    def get_process_info():
-        pass
+    def get_process_info(self,*args,**kwargs):
+        ps_list=[]
+        list=psutil.process_iter()
+        for proc in list:
+            ps=proc.as_dict(attrs=['pid', 'name'])['name']
+            if ps in args[0]: 
+               if ps not in ps_list:
+                   ps_list.append(ps)
+        return ps_list
 		
     def get_hostname(self):
         self.hostname=socket.gethostname()
@@ -320,15 +307,15 @@ class system_info(object):
         self.cpu_info["cpu_usage"] = psutil.cpu_percent()
         return self.cpu_info
 
-    def get_system_info(self):
+    def get_system_info(self,*args,**kwargs):
         self.system_info['hostname'] = self.get_hostname()
         self.system_info['ip_dict'] = self.get_ip_dict()
         self.system_info['cpu_info'] = self.get_cpu_info()
         self.system_info['mem_info'] = self.get_mem_info()
-        self.system_info['kernel_info'] = self.get_kernel_info()
         self.system_info['system_name'] = self.get_system_name()
-        self.system_info['architecture'] = self.get_architecture()
         self.system_info['disk_info'] = self.get_disk_info()
+        self.system_info['processlist'] = self.get_process_info(*args,**kwargs)
+        
         return self.system_info
     def post_system_info(self,url,data):
         format_data=urllib.urlencode(data)
@@ -338,16 +325,16 @@ class system_info(object):
         return content
 		
 class pantalaimon(Daemon):
-    def run(self,client,url,interval):
+    def run(self,client,url,interval,process_list):
         while True:
-            data=client.get_system_info()
+            data=client.get_system_info(process_list)
             post_data={'host_info':data}
             client.post_system_info(url,post_data)
             time.sleep(interval)
             
 if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='cmdbclient')
-    parser.add_argument('action',choices=['start','restart','stop','run','status','getpid'],default='start',type=str,help='指定操作类型')
+    parser.add_argument('action',choices=['start','restart','stop','run','status'],default='start',type=str,help='指定操作类型')
     parser.add_argument('--config',type=str,help='指定配置文件')
     args=parser.parse_args()
     action=args.action
@@ -359,9 +346,10 @@ if __name__=='__main__':
     uri=config['server']['uri']
     url='http://'+host+':'+port+uri
     pid=config['client']['pid']
+    pslist=config['client']['process_list'].split('^')
     cmdbdaemon = pantalaimon(pid, verbose=1)
     client_info=system_info()
-    args_dic={'url':url,'client':client_info,'interval':interval}
+    args_dic={'url':url,'client':client_info,'interval':interval,'process_list':pslist}
     if action == 'start':
         cmdbdaemon.start(**args_dic)
     elif action == 'restart':
