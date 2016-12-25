@@ -258,7 +258,7 @@ class system_info(object):
         return self.disk_info
     
     def get_system_name(self):
-        self.system_name =platform.platform() 
+        self.system_name =''.join(platform.linux_distribution()[0:2]) 
         return self.system_name
 
     def get_mem_info(self):

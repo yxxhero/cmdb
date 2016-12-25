@@ -18,5 +18,6 @@ class hostinfo(models.Model):
     project=models.CharField(max_length=255)
     location=models.CharField(max_length=255,null=True)
     services=models.CharField(max_length=255,null=True)
+    status=models.BooleanField(default=1)
     Createtime=models.DateTimeField(auto_now_add=True)
     Updatetime=models.DateTimeField(auto_now = True)

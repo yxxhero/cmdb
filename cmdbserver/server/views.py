@@ -4,7 +4,8 @@ from django.template.context_processors import request
 from django.http.response import HttpResponse
 from django.shortcuts import render_to_response
 from forms import userregister
-from models import userinfo
+from models import userinfo,hostinfo
+from django.utils.safestring import mark_safe
 import json
 # Create your views here.
 #检测是否已经登录
@@ -18,8 +19,17 @@ def checklogin(func):
 ######################################################################
 @checklogin        
 def index(request):
+    hostlist=[]
+    tmp_list=hostinfo.objects.all()
+    for i in tmp_list:
+        if i.status:
+            i.status=mark_safe('<i class="fa fa-circle ok_status" aria-hidden="true"></i>')
+        else:
+            i.status=mark_safe('<i class="fa fa-circle warn_status" aria-hidden="true"></i>')
+        hostlist.append(i)
+    hostnum=hostinfo.objects.all().count()
     username=request.session['login_info']['username']
-    return render_to_response("index.html",{'username':username})
+    return render_to_response("index.html",{'username':username,'hostlist':hostlist,'hostnum':hostnum})
 def login(request):
     return render_to_response("signin.html")
 def register(request):
@@ -67,6 +77,18 @@ def logout(request):
     del request.session['login_info']
     return render_to_response('signin.html')
 def posthostinfo(request):
-    host_info=request.POST.get('host_info',None)
-    print host_info
-    return HttpResponse('ok') 
+    clinet_host_info=eval(request.POST.get('host_info',None))
+    print clinet_host_info
+    num=hostinfo.objects.filter(hostname=clinet_host_info['hostname']).count()
+    print num
+    if num < 1:
+        host_dic={}
+        host_dic['hostname']=clinet_host_info['hostname']
+        host_dic['ip']=clinet_host_info['ip_dict']['eth0']
+        host_dic['system']=clinet_host_info['system_name']
+        host_dic['project']='dark'
+        host_dic['services']=' '.join(clinet_host_info['processlist'])
+        hostinfo.objects.create(**host_dic)
+        return HttpResponse('ok')
+    else:
+        return HttpResponse('Host already exists')
