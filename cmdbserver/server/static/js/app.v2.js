@@ -4276,9 +4276,8 @@ Date.now = Date.now || function() {
         setTimeout(function() {
             addMsg($msg);
         }, 1500);
-        $('[data-ride="datatables"]').each(function() {
-            var oTable = $(this).dataTable({"sPaginationType": "full_numbers","sDom": "<'row'<'col-sm-6'l><'col-sm-6'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>"});
-        });
+
+            $('#datatables').dataTable({"sPaginationType": "full_numbers","sDom": "<'row'<'col-sm-6'l><'col-sm-6'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>"});
         if ($.fn.select2) {
             $("#select2-option").select2();
             $("#select2-tags").select2({tags: ["red", "green", "blue"],tokenSeparators: [",", " "]});

@@ -84,7 +84,7 @@ def posthostinfo(request):
     if num < 1:
         host_dic={}
         host_dic['hostname']=clinet_host_info['hostname']
-        host_dic['ip']=clinet_host_info['ip_dict']['eth0']
+        host_dic['ip']=clinet_host_info['ip_dict']['eth1']
         host_dic['system']=clinet_host_info['system_name']
         host_dic['project']='dark'
         host_dic['services']=' '.join(clinet_host_info['processlist'])
