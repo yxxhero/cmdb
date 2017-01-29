@@ -84,6 +84,9 @@ overflow:hidden;
 figure {
 	margin:0;
 }
+cursorstyle {
+	cursor:hand;
+}
 fieldset {
 	padding:0.35em 0.625em 0.75em;
 	margin:0 2px;
