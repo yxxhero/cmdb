@@ -66,7 +66,17 @@
 {% block scripts %}
 <script>
 function deletehost(host,id) {
-        alert(id);
+        $.ajax({
+                url:'/deletehost/',
+                type:'POST',
+                async:true,
+                data:{'id':id},
+                timeout:5000,
+                success:function(result){
+                   console.log(result)
+                }
+
+        })
 }
 </script>
 <script src="/static/js/app.v2.js"></script> 

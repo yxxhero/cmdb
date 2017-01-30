@@ -92,3 +92,13 @@ def posthostinfo(request):
         return HttpResponse('ok')
     else:
         return HttpResponse('Host already exists')
+def deletehost(request):
+    hostid=request.POST.get("id",None)
+    if hostid:
+        try:
+            hostinfo.objects.filter(id=hostid).delete()
+        except Exception,e:
+            print e
+            return HttpResponse("false")
+        else:
+            return HttpResponse("ok")
