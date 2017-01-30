@@ -66,6 +66,7 @@
 {% block scripts %}
 <script>
 function deletehost(host,id) {
+        if(confirm("Are you sure to delete the host?")){
         $.ajax({
                 url:'/deletehost/',
                 type:'POST',
@@ -73,10 +74,17 @@ function deletehost(host,id) {
                 data:{'id':id},
                 timeout:5000,
                 success:function(result){
-                   console.log(result)
+                   console.log(result);
+                   location.reload();
                 }
 
         })
+        }
+        else{
+                console.log("cancle")
+        
+        }
+
 }
 </script>
 <script src="/static/js/app.v2.js"></script> 
