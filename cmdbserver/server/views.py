@@ -4,7 +4,7 @@ from django.template.context_processors import request
 from django.http.response import HttpResponse
 from django.shortcuts import render_to_response
 from forms import userregister
-from models import userinfo,hostinfo
+from models import userinfo,hostinfo,saltcommandhistory
 from django.utils.safestring import mark_safe
 import json
 # Create your views here.
@@ -102,3 +102,29 @@ def deletehost(request):
             return HttpResponse("false")
         else:
             return HttpResponse("ok")
+@checklogin
+def saltcontrol(request):
+    loginstatus=request.session.get('is_login',None)
+    username=loginstatus['username']
+    tgt_type=request.POST.get('miniontype','glob')
+    minion=request.POST.get('minion',None)
+    saltmodule=request.POST.get('module',None)
+    module_arg=request.POST.get('arg',None)
+    try:
+        saltcommandhistory.objects.create(username=username,minions=minion,miniontype=tgt_type,module=saltmodule,arg=module_arg)
+    except Exception,e:
+        print e.message
+    else:
+        print "ok"
+    local = salt.client.LocalClient()
+    if module_arg:
+        result=local.cmd(minion,saltmodule,arg=(module_arg,),expr_form=tgt_type)
+    else:
+        result=local.cmd(minion,saltmodule,expr_form=tgt_type)
+#    return render_to_response("index.html",{"dicts":result,'username':loginstatus['username']},context_instance=RequestContext(request))
+    return HttpResponse(json.dumps(result))
+
+@checklogin
+def showcmdhistory(request):
+    cmdhistoryresult=saltcommandhistory.objects.all()
+    return render(request,'commandhistory.html',{'cmddicts':cmdhistoryresult})
