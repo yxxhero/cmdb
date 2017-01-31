@@ -1,3 +1,5 @@
+#!/usr/bin/env python2.7
+#coding:utf-8
 from __future__ import unicode_literals
 
 from django.db import models
@@ -21,3 +23,13 @@ class hostinfo(models.Model):
     status=models.BooleanField(default=1)
     Createtime=models.DateTimeField(auto_now_add=True)
     Updatetime=models.DateTimeField(auto_now = True)
+class saltcommandhistory(models.Model):
+    username=models.CharField(max_length=30)
+    createtime=models.DateTimeField(auto_now_add = True)
+    minions=models.CharField(max_length=255)
+    miniontype=models.CharField(max_length=255)
+    module=models.CharField(max_length=255)
+    arg=models.CharField(max_length=255,null=True)
+    class Meta:
+        verbose_name = '命令历史'
+        verbose_name_plural = '命令历史'
