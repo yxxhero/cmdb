@@ -126,8 +126,9 @@ def saltcontrol(request):
 
 @checklogin
 def showcmdhistory(request):
+    username=request.session['login_info']['username']
     cmdhistoryresult=saltcommandhistory.objects.all()
-    return render(request,'commandhistory.html',{'cmddicts':cmdhistoryresult})
+    return render_to_response('commandhistory.html',{'cmddicts':cmdhistoryresult,"username":username})
 @checklogin
 def saltadmin(request):
     username=request.session['login_info']['username']
