@@ -104,7 +104,7 @@ def deletehost(request):
             return HttpResponse("ok")
 @checklogin
 def saltcontrol(request):
-    loginstatus=request.session.get('is_login',None)
+    loginstatus=request.session.get('login_info',None)
     username=loginstatus['username']
     tgt_type=request.POST.get('miniontype','glob')
     minion=request.POST.get('minion',None)
@@ -128,3 +128,6 @@ def saltcontrol(request):
 def showcmdhistory(request):
     cmdhistoryresult=saltcommandhistory.objects.all()
     return render(request,'commandhistory.html',{'cmddicts':cmdhistoryresult})
+@checklogin
+def saltadmin(request):
+    return render_to_response('saltadmin.html')
