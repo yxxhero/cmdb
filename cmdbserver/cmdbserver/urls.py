@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from server.views import index,login,register,signin,logout,posthostinfo,deletehost,saltadmin
+from server.views import index,login,register,signin,logout,posthostinfo,deletehost,saltadmin,saltcontrol,showcmdhistory
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$',index),
@@ -27,4 +27,6 @@ urlpatterns = [
     url(r'^posthostinfo/',posthostinfo),
     url(r'^deletehost/',deletehost),
     url(r'^saltadmin/',saltadmin),
+    url(r'^saltcmdrun/',saltcontrol),
+    url(r'^salthistory/',showcmdhistory),
 ]

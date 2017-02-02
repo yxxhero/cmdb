@@ -130,4 +130,5 @@ def showcmdhistory(request):
     return render(request,'commandhistory.html',{'cmddicts':cmdhistoryresult})
 @checklogin
 def saltadmin(request):
-    return render_to_response('saltadmin.html')
+    username=request.session['login_info']['username']
+    return render_to_response('saltadmin.html',{"username":username})

@@ -15,8 +15,8 @@
                   <li> <a href="/"> <i class="fa fa-dashboard icon"> <b class="bg-danger"></b> </i> <span>资产概览</span> </a> </li>
                   <li class="active"> <a href="#layout" class="active"> <i class="fa fa-columns icon"> <b class="bg-warning"></b> </i> <span class="pull-right"> <i class="fa fa-angle-down text"></i> <i class="fa fa-angle-up text-active"></i> </span> <span>salt管理</span> </a>
                     <ul class="nav lt">
-                      <li class="active"> <a href="/saltadmin/" class="active"> <i class="fa fa-angle-right"></i> <span>salt远程管理</span> </a> </li>
-                      <li > <a href="/salthistory/" > <i class="fa fa-angle-right"></i> <span>salt命令历史</span> </a> </li>
+                      <li> <a href="/saltadmin/"> <i class="fa fa-angle-right"></i> <span>salt远程管理</span> </a> </li>
+                      <li class="active"> <a href="/salthistory/" class="active"> <i class="fa fa-angle-right"></i> <span>salt命令历史</span> </a> </li>
                       <li > <a href="layout-h.html" > <i class="fa fa-angle-right"></i> <span>salt配置概览</span> </a> </li>
                     </ul>
                   </li>
@@ -73,52 +73,63 @@
           <section class="scrollable padder">
             <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
               <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
-              <li class="active">salt 远程管理</li>
+              <li class="active">salt 命令历史</li>
             </ul>
             <section class="panel panel-default">
-              <header class="panel-heading">Minion Configure<i class="fa fa-info-sign text-muted" data-toggle="tooltip" data-placement="bottom" ></i> </header>
+              <header class="panel-heading">Salt Commmand History<i class="fa fa-info-sign text-muted" data-toggle="tooltip" data-placement="bottom" ></i> </header>
               <div class="table-responsive">
                 <table class="table table-striped m-b-none">
                   <thead>
-                  <th><label for="minion">请输入minions：</label></th>
-                  <th><label for="miniontype">请选择minions的类型:</label></th>
-                  <th><label for="minion">请输入要执行的module：</label></th>
-                  <th><label for="minion">请输入要执行的module的参数：</label></th>
-                  <th>Submit</th>
-                  </thead>
-                  <tbody>
                     <tr>
-                    <td><input id='minion' style='width:102px' type="text" name="minion"/></td>
-                    <td>
-                                <select name="miniontype" id='miniontype'>
-                                    <option value="nodegroup">nodegroup</option>
-                                    <option value="pcre">pcre</option>
-                                    <option value="list">list</option>
-                                    <option value="grain">grain</option>
-                                    <option value="grain_pcre">grain_pcre</option>
-                                    <option value="glob">glob</option>
-                                    <option value="range">range</option>
-                                    <option value="compound">compound</option>
-                                </select>
-                    </td>
-                    <td><input type="text" id='module' name="module"/></td>
-                    <td><input  id='arg' type="text" name="arg"/></td>
-                    <td><button type="button" class="layui-btn layui-btn-mini" value="Submit" id="minionsubmit">Submit</button></td>
+                      <th>start time</th>
+                      <th>end time</th>
+                      <th>submit</th>
                     </tr>
-                  </tbody>
+                  </thead>
+                          <tbody>
+                                <tr>
+                                <td><input class="layui-input" placeholder="开始日期" id="LAY_demorange_s"></td>
+                                <td><input class="layui-input" placeholder="截止日期" id="LAY_demorange_e"></td>
+                                <td><button class="layui-btn layui-btn-normal" type="button" name="setimesubmit" id="timesubmit">submit</button></td>
+                                </tr>
+                          </tbody>
                 </table>
-              </div>
-            </section>
-            <section class="panel panel-default">
-              <header class="panel-heading">Result<i class="fa fa-info-sign text-muted" data-toggle="tooltip" data-placement="bottom" ></i> </header>
-              <div class="table-responsive">
                 <table class="table table-striped m-b-none" id="datatables">
                   <thead>
-                  <th>minionid</th>
-                  <th>result</th>
+                    <tr>
+                      <th>id</th>
+                      <th>执行时间</th>
+                      <th>用户名</th>
+                      <th>minion</th>
+                      <th>minion类型</th>
+                      <th>模块</th>
+                      <th>参数</th>
+                    </tr>
                   </thead>
-                  <tbody>
-                  </tbody>
+                          <tbody>
+                                {% for item in cmddicts %}
+                                <tr>
+                                <td>{{item.id}}</td>
+                                <td>{{item.createtime | date:"Y-m-d H:i:s"}}</td>
+                                <td>{{item.username}}</td>
+                                <td>{{item.minions}}</td>
+                                <td>{{item.miniontype}}</td>
+                                <td>{{item.module}}</td>
+                                <td>{{item.arg}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>end</th>
+                                    <th>end</th>
+                                    <th>end</th>
+                                    <th>end</th>
+                                    <th>end</th>
+                                    <th>end</th>
+                                    <th>end</th>
+                                </tr>
+                            </tfoot>
                 </table>
               </div>
             </section>
@@ -143,28 +154,59 @@
 <script src="/static/js/sortable/jquery.sortable.js" cache="false"></script>
 <script>
 $(document).ready(function () {
-            $('#minionsubmit').on('click', function(){
-                console.log('yes')
-                var minion=$('#minion').val();
-                var miniontype=$('#miniontype').val();
-                var module=$('#module').val();
-                var arg=$('#arg').val();
-                var index = layer.load(3);
-                 $.ajax({
-                  url:'/saltcmdrun/',
-                  data:{'minion':minion,'miniontype':miniontype,'module':module,'arg':arg},
-                  type:'POST',
-                  success:function(callback){
-                  layer.close(index); 
-                  obj=jQuery.parseJSON(callback);
-                  $("#datatables tbody").html("");
-                  $.each(obj, function (k, v) {
-                      resultdata='<tr class="gradeX"> <td class="center">'+k+'</td>'+'<td class="center">'+v+'</td>'+'</tr>'
-                    $("#resulttable tbody").append(resultdata);
-                    });
-                   }
-                   });
-             });
+layui.use('laydate', function(){
+  var laydate = layui.laydate;
+  
+  var start = {
+    min: laydate.now()
+    ,max: '2099-06-16 23:59:59'
+    ,istoday: false
+    ,festival: true
+    ,choose: function(datas){
+      end.min = datas; //开始日选好后，重置结束日的最小日期
+      end.start = datas //将结束日的初始值设定为开始日
+    }
+  };
+  
+  var end = {
+    min: laydate.now()
+    ,max: '2099-06-16 23:59:59'
+    ,istoday: false
+    ,festival: true
+    ,choose: function(datas){
+      start.max = datas; //结束日选好后，重置开始日的最大日期
+    }
+  };
+  
+  document.getElementById('LAY_demorange_s').onclick = function(){
+    start.elem = this;
+    laydate(start);
+  }
+  document.getElementById('LAY_demorange_e').onclick = function(){
+    end.elem = this
+    laydate(end);
+  }
+  
+});
+$('#timesubmit').click(function (){
+var st=$('#LAY_demorange_s').val();
+var et=$('#LAY_demorange_e').val();
+var index = layer.load(3);
+$.ajax({
+ url:'/historybytime/',
+ data:{'st':st,'et':et},
+ type:'POST',
+ success:function(callback){
+ layer.close(index); 
+ obj=jQuery.parseJSON(callback);
+ $("#resulttable tbody").html("");
+ $.each(obj, function (k, v) {
+     resultdata='<tr class="gradeX"> <td class="center">'+k+'</td>'+'<td class="center">'+v+'</td>'+'</tr>'
+   $("#resulttable tbody").append(resultdata);
+   });
+  }
+  });
+});
 })
 </script>
 {% endblock %}
