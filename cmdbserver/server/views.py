@@ -134,3 +134,12 @@ def showcmdhistory(request):
 def saltadmin(request):
     username=request.session['login_info']['username']
     return render_to_response('saltadmin.html',{"username":username})
+@checklogin
+def filterhistory(request):
+    st=request.POST.get("st",None)
+    et=request.POST.get("et",None)
+    if all([st,et]):
+        hisresult=saltcommandhistory.objects.filter(createtime__range=(st,et))
+        for item in hisresult:
+            print item.id
+        return HttpResponse("ok")

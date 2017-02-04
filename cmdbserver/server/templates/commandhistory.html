@@ -2,6 +2,7 @@
 {% block title %}cmdb{% endblock %}
 {% block css %}
 <link rel="stylesheet" href="/static/layui/css/layui.css" type="text/css" />
+<link rel="stylesheet" href="/static/js/layer/skin/default/layer.css" type="text/css" />
 <link rel="stylesheet" href="/static/css/app.v2.css" type="text/css" />
 <link rel="stylesheet" href="/static/js/calendar/bootstrap_calendar.css" type="text/css" cache="false" />
 <link rel="stylesheet" href="/static/js/datatables/datatables.css" type="text/css" cache="false">
@@ -94,7 +95,7 @@
                                 </tr>
                           </tbody>
                 </table>
-                <table class="table table-striped m-b-none" id="datatables">
+                <table class="table table-striped m-b-none" id="resulttable">
                   <thead>
                     <tr>
                       <th>id</th>
@@ -141,6 +142,7 @@
 {% block scripts %}
 <script src="/static/js/app.v2.js"></script> 
 <script src="/static/layui/layui.js"></script> 
+<script src="/static/js/layer/layer.js"></script>
 <script src="/static/js/datatables/jquery.dataTables.min.js" cache="false"></script>
 <script src="/static/js/charts/easypiechart/jquery.easy-pie-chart.js" cache="false"></script> 
 <script src="/static/js/charts/sparkline/jquery.sparkline.min.js" cache="false"></script>
@@ -160,8 +162,10 @@ layui.use('laydate', function(){
   var start = {
     min: laydate.now()
     ,max: '2099-06-16 23:59:59'
+    ,format: 'YYYY-MM-DD hh:mm:ss'
     ,istoday: false
     ,festival: true
+    ,istime: true
     ,choose: function(datas){
       end.min = datas; //开始日选好后，重置结束日的最小日期
       end.start = datas //将结束日的初始值设定为开始日
@@ -171,8 +175,10 @@ layui.use('laydate', function(){
   var end = {
     min: laydate.now()
     ,max: '2099-06-16 23:59:59'
+    ,format: 'YYYY-MM-DD hh:mm:ss'
     ,istoday: false
     ,festival: true
+    ,istime: true
     ,choose: function(datas){
       start.max = datas; //结束日选好后，重置开始日的最大日期
     }
