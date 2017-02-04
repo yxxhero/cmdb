@@ -206,10 +206,10 @@ $.ajax({
  layer.close(index); 
  obj=jQuery.parseJSON(callback);
  $("#resulttable tbody").html("");
- $.each(obj, function (k, v) {
+ for ( var p in obj ){
      resultdata='<tr class="gradeX"> <td class="center">'+k+'</td>'+'<td class="center">'+v+'</td>'+'</tr>'
    $("#resulttable tbody").append(resultdata);
-   });
+    }
   }
   });
 });
