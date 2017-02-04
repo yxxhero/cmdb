@@ -140,6 +140,8 @@ def filterhistory(request):
     et=request.POST.get("et",None)
     if all([st,et]):
         hisresult=saltcommandhistory.objects.filter(createtime__range=(st,et))
+        resultlist=[]
         for item in hisresult:
-            print item.id
-        return HttpResponse("ok")
+            resultlist.append({"id":item.id,"username":item.username,"createtime":item.createtime,"minions":item.minions,"miniontype":item.miniontype,"module":module,"arg":item.arg})
+        resultdata=json.dumps(resultlist)
+        return HttpResponse(resuledata)
