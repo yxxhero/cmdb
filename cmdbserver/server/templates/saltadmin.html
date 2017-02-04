@@ -2,6 +2,7 @@
 {% block title %}cmdb{% endblock %}
 {% block css %}
 <link rel="stylesheet" href="/static/layui/css/layui.css" type="text/css" />
+<link rel="stylesheet" href="/static/js/layer/skin/default/layer.css" type="text/css" />
 <link rel="stylesheet" href="/static/css/app.v2.css" type="text/css" />
 <link rel="stylesheet" href="/static/js/calendar/bootstrap_calendar.css" type="text/css" cache="false" />
 <link rel="stylesheet" href="/static/js/datatables/datatables.css" type="text/css" cache="false">
@@ -91,12 +92,12 @@
                     <td><input id='minion' style='width:102px' type="text" name="minion"/></td>
                     <td>
                                 <select name="miniontype" id='miniontype'>
+                                    <option value="glob">glob</option>
                                     <option value="nodegroup">nodegroup</option>
                                     <option value="pcre">pcre</option>
                                     <option value="list">list</option>
                                     <option value="grain">grain</option>
                                     <option value="grain_pcre">grain_pcre</option>
-                                    <option value="glob">glob</option>
                                     <option value="range">range</option>
                                     <option value="compound">compound</option>
                                 </select>
@@ -112,7 +113,7 @@
             <section class="panel panel-default">
               <header class="panel-heading">Result<i class="fa fa-info-sign text-muted" data-toggle="tooltip" data-placement="bottom" ></i> </header>
               <div class="table-responsive">
-                <table class="table table-striped m-b-none" id="datatables">
+                <table class="table table-striped m-b-none" id="resultdatatables">
                   <thead>
                   <th>minionid</th>
                   <th>result</th>
@@ -130,6 +131,7 @@
 {% block scripts %}
 <script src="/static/js/app.v2.js"></script> 
 <script src="/static/layui/layui.js"></script> 
+<script src="/static/js/layer/layer.js"></script> 
 <script src="/static/js/datatables/jquery.dataTables.min.js" cache="false"></script>
 <script src="/static/js/charts/easypiechart/jquery.easy-pie-chart.js" cache="false"></script> 
 <script src="/static/js/charts/sparkline/jquery.sparkline.min.js" cache="false"></script>
@@ -149,7 +151,7 @@ $(document).ready(function () {
                 var miniontype=$('#miniontype').val();
                 var module=$('#module').val();
                 var arg=$('#arg').val();
-                var index = layer.load(3);
+                var index = layer.load();
                  $.ajax({
                   url:'/saltcmdrun/',
                   data:{'minion':minion,'miniontype':miniontype,'module':module,'arg':arg},
@@ -157,11 +159,12 @@ $(document).ready(function () {
                   success:function(callback){
                   layer.close(index); 
                   obj=jQuery.parseJSON(callback);
-                  $("#datatables tbody").html("");
+                  $("#resultdatatables tbody").html("");
                   $.each(obj, function (k, v) {
-                      resultdata='<tr class="gradeX"> <td class="center">'+k+'</td>'+'<td class="center">'+v+'</td>'+'</tr>'
-                    $("#resulttable tbody").append(resultdata);
+                      resultdata='<tr> <td >'+k+'</td>'+'<td>'+v+'</td>'+'</tr>'
+                    $("#resultdatatables tbody").append(resultdata);
                     });
+                   $('#resultdatatables').dataTable({"sPaginationType": "full_numbers","sDom": "<'row'<'col-sm-6'l><'col-sm-6'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>"});
                    }
                    });
              });

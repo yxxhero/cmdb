@@ -7,6 +7,7 @@ from forms import userregister
 from models import userinfo,hostinfo,saltcommandhistory
 from django.utils.safestring import mark_safe
 import json
+import salt.client 
 # Create your views here.
 #检测是否已经登录
 def checklogin(func):
