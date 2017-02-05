@@ -9,6 +9,7 @@ from django.utils.safestring import mark_safe
 import json
 import salt.client 
 from datetime import datetime
+import salt.config
 class DateTimeEncoder(json.JSONEncoder):
     def default(self,o):
         if isinstance(o,datetime):
@@ -136,6 +137,11 @@ def showcmdhistory(request):
     username=request.session['login_info']['username']
     cmdhistoryresult=saltcommandhistory.objects.all()
     return render_to_response('commandhistory.html',{'cmddicts':cmdhistoryresult,"username":username})
+@checklogin
+def saltconfig(request):
+    username=request.session['login_info']['username']
+    master_ops = salt.config.client_config('/etc/salt/master')
+    return render_to_response('saltconfig.html',{"username":username,"dicts":master_ops})
 @checklogin
 def saltadmin(request):
     username=request.session['login_info']['username']
