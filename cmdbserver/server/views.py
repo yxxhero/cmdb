@@ -8,6 +8,12 @@ from models import userinfo,hostinfo,saltcommandhistory
 from django.utils.safestring import mark_safe
 import json
 import salt.client 
+from datetime import datetime
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self,o):
+        if isinstance(o,datetime):
+            return o.isoformat()
+        return json.JSONEncoder.default(self,o)
 # Create your views here.
 #检测是否已经登录
 def checklogin(func):
@@ -142,6 +148,6 @@ def filterhistory(request):
         hisresult=saltcommandhistory.objects.filter(createtime__range=(st,et))
         resultlist=[]
         for item in hisresult:
-            resultlist.append({"id":item.id,"username":item.username,"createtime":item.createtime,"minions":item.minions,"miniontype":item.miniontype,"module":module,"arg":item.arg})
-        resultdata=json.dumps(resultlist)
-        return HttpResponse(resuledata)
+            resultlist.append({"id":item.id,"username":item.username,"createtime":item.createtime,"minions":item.minions,"miniontype":item.miniontype,"module":item.module,"arg":item.arg})
+        resultdata=json.dumps(resultlist,cls=DateTimeEncoder)
+        return HttpResponse(resultdata)

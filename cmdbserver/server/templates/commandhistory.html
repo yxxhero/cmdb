@@ -160,7 +160,7 @@ layui.use('laydate', function(){
   var laydate = layui.laydate;
   
   var start = {
-    min: laydate.now()
+    min: '2000-06-16 23:59:59'
     ,max: '2099-06-16 23:59:59'
     ,format: 'YYYY-MM-DD hh:mm:ss'
     ,istoday: false
@@ -207,9 +207,10 @@ $.ajax({
  obj=jQuery.parseJSON(callback);
  $("#resulttable tbody").html("");
  for ( var p in obj ){
-     resultdata='<tr class="gradeX"> <td class="center">'+k+'</td>'+'<td class="center">'+v+'</td>'+'</tr>'
+     resultdata='<tr> <td>'+obj[p].id+'</td><td>'+obj[p].createtime.substring(0,10)+' '+obj[p].createtime.substring(11,19)+'</td><td>'+obj[p].username+'</td><td>'+obj[p].minions+'</td><td>'+obj[p].miniontype+'</td><td>'+obj[p].module+'</td><td>'+obj[p].arg+'</td></tr>'
    $("#resulttable tbody").append(resultdata);
     }
+$('#resulttable').dataTable({"sPaginationType": "full_numbers","sDom": "<'row'<'col-sm-6'l><'col-sm-6'f>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>"});
   }
   });
 });
