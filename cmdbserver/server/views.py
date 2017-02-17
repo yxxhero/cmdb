@@ -159,6 +159,6 @@ def filterhistory(request):
         resultdata=json.dumps(resultlist,cls=DateTimeEncoder)
         return HttpResponse(resultdata)
 class commitupdata(SessionWizardView):
-    def done(self,form_list,form_dic,**kwargs):
-
-
+    def done(self,form_list,**kwargs):
+        for form in form_list:
+            print form

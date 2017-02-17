@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from server.views import index,login,register,signin,logout,posthostinfo,deletehost,saltadmin,saltcontrol,showcmdhistory,filterhistory,saltconfig
+from server.views import index,login,register,signin,logout,posthostinfo,deletehost,saltadmin,saltcontrol,showcmdhistory,filterhistory,saltconfig,commitupdata
+from server.forms import updatecommit1,updatecommit2,updatecommit3
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$',index),
@@ -31,4 +32,5 @@ urlpatterns = [
     url(r'^salthistory/',showcmdhistory),
     url(r'^historybytime/',filterhistory),
     url(r'^saltconfigview/',saltconfig),
+    url(r'^codeupdatecommit/',commitupdata.as_view([updatecommit1,updatecommit2,updatecommit3]),
 ]
