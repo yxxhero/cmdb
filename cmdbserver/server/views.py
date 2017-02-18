@@ -9,7 +9,6 @@ from django.utils.safestring import mark_safe
 import json
 import salt.client 
 from datetime import datetime
-from formtools.wizard.views import SessionWizardView
 import salt.config
 class DateTimeEncoder(json.JSONEncoder):
     def default(self,o):
@@ -158,7 +157,3 @@ def filterhistory(request):
             resultlist.append({"id":item.id,"username":item.username,"createtime":item.createtime,"minions":item.minions,"miniontype":item.miniontype,"module":item.module,"arg":item.arg})
         resultdata=json.dumps(resultlist,cls=DateTimeEncoder)
         return HttpResponse(resultdata)
-class commitupdata(SessionWizardView):
-    def done(self,form_list,**kwargs):
-        for form in form_list:
-            print form
