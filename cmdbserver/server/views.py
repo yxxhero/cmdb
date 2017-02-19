@@ -161,4 +161,33 @@ def filterhistory(request):
 def codepublish(request):
     username=request.session['login_info']['username']
     return render_to_response('codepublish.html',{"username":username,"form":codecommit})
-    
+@checklogin
+def commitupdate(request):
+    form=codecommit()
+    print request.method
+    if request.method == 'POST':
+        register_form=codecommit(request.POST)
+        if register_form.is_valid():
+            register_dic=register_form.clean()
+            print register_dic
+            return HttpResponse("ok")
+#            num=userinfo.objects.filter(Name=register_dic['Name'],Password=register_dic['Password']).count()
+#            if num >= 1:
+#                message='用户已存在'
+#                return render_to_response('signup.html',{'user':form,'errormessage':message})
+#            else:
+#                try:
+#                    userinfo.objects.create(**register_dic)
+#                except Exception,e:
+#                    return render_to_response('signup.html',{'user':form,'errormessage':e.message})
+#                else:
+#                    message='注册成功'
+#                    return render_to_response('signup.html',{'user':form,'errormessage':message})
+#        else:
+#            error_msg=register_form.errors.as_json()
+#            ret['error']=json.loads(error_msg)
+#            warn_item=ret['error'].keys()[0]
+#            message=ret['error'][warn_item][0]['message']
+#            return render_to_response('signup.html',{'user':form,'errormessage':message})
+#    else:
+#        return render_to_response('signup.html',{'user':form}) 

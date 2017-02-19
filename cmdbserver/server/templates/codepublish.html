@@ -2,9 +2,9 @@
 {% block title %}cmdb{% endblock %}
 {% block css %}
 <link rel="stylesheet" href="/static/css/app.v2.css" type="text/css" />
-<link rel="stylesheet" href="/static/js/calendar/bootstrap_calendar.css" type="text/css" cache="false" />
-<link rel="stylesheet" href="/static/js/datatables/datatables.css" type="text/css" cache="false">
 <link rel="stylesheet" href="/static/css/font.css" type="text/css" cache="false" />
+<link rel="stylesheet" href="/static/js/datatables/datatables.css" type="text/css" cache="false">
+<link rel="stylesheet" href="/static/js/fuelux/fuelux.css" type="text/css" cache="false">
 {% endblock %}
 {% block menusection %}
 <section class="w-f scrollable">
@@ -55,7 +55,7 @@
                 </ul>
               </div>
               <div class="step-content">
-                <form action="/putcodecommit/" method='post'>
+                <form action="/putcodecommit/"  method='post'>
                   <div class="step-pane active" id="step1">
                     <p>svn信息</p>
                     {{ form.svninfo }}
@@ -68,7 +68,6 @@
                     <p>审核人员</p>
                     {{ form.people }}
                   </div>
-                    <p>describtion</p>
                 </form>
                 <div class="actions m-t">
                   <button type="button" class="btn btn-default btn-sm btn-prev" data-target="#form-wizard" data-wizard="previous" disabled="disabled">Prev</button>
@@ -81,39 +80,8 @@
         <a href="#" class="hide nav-off-screen-block" data-toggle="class:nav-off-screen" data-target="#nav"></a> </section>
 {% endblock %}
 {% block scripts %}
-<script>
-function deletehost(host,id) {
-        if(confirm("Are you sure to delete the host?")){
-        $.ajax({
-                url:'/deletehost/',
-                type:'POST',
-                async:true,
-                data:{'id':id},
-                timeout:5000,
-                success:function(result){
-                   console.log(result);
-                   location.reload();
-                }
-
-        })
-        }
-        else{
-                console.log("cancle")
-        
-        }
-
-}
-</script>
 <script src="/static/js/app.v2.js"></script> 
+<script src="/static/js/fuelux/fuelux.js" cache="false"></script>
 <script src="/static/js/datatables/jquery.dataTables.min.js" cache="false"></script>
-<script src="/static/js/charts/easypiechart/jquery.easy-pie-chart.js" cache="false"></script> 
-<script src="/static/js/charts/sparkline/jquery.sparkline.min.js" cache="false"></script>
-<script src="/static/js/charts/flot/jquery.flot.min.js" cache="false"></script> 
-<script src="/static/js/charts/flot/jquery.flot.tooltip.min.js" cache="false"></script>
-<script src="/static/js/charts/flot/jquery.flot.resize.js" cache="false"></script> 
-<script src="/static/js/charts/flot/jquery.flot.grow.js" cache="false"></script> 
-<script src="/static/js/charts/flot/demo.js" cache="false"></script>
-<script src="/static/js/calendar/bootstrap_calendar.js" cache="false"></script> 
-<script src="/static/js/calendar/demo.js" cache="false"></script> 
-<script src="/static/js/sortable/jquery.sortable.js" cache="false"></script>
+</script><script src="/static/js/parsley/parsley.min.js" cache="false"></script>
 {% endblock %}
