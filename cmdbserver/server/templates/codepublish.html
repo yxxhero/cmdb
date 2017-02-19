@@ -21,7 +21,7 @@
                   </li>
                   <li class="active"> <a href="#codepublish" class="active"> <i class="fa fa-flask icon"> <b class="bg-success"></b> </i> <span class="pull-right"> <i class="fa fa-angle-down text"></i> <i class="fa fa-angle-up text-active"></i> </span> <span>代码发布</span> </a>
                     <ul class="nav lt">
-                      <li > <a href="buttons.html" > <i class="fa fa-angle-right"></i> <span>提交更新</span> </a> </li>
+                      <li class="active"> <a href="/codepublish/" class="active"> <i class="fa fa-angle-right"></i> <span>提交更新</span> </a> </li>
                       <li > <a href="icons.html" > <b class="badge bg-info pull-right">369</b> <i class="fa fa-angle-right"></i> <span>所有更新</span> </a> </li>
                       <li > <a href="widgets.html" > <b class="badge pull-right">8</b> <i class="fa fa-angle-right"></i> <span>版本列表</span> </a> </li>
                       <li > <a href="components.html" > <i class="fa fa-angle-right"></i> <span>回滚记录</span> </a> </li>
@@ -39,7 +39,7 @@
         <section class="vbox">
           <section class="scrollable padder">
             <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
-              <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
+              <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
               <li><a href="#">代码发布</a></li>
               <li class="active">更新申请</li>
             </ul>
@@ -55,16 +55,20 @@
                 </ul>
               </div>
               <div class="step-content">
-                <form>
+                <form action="/putcodecommit/" method='post'>
                   <div class="step-pane active" id="step1">
-                    <p>Your website:</p>
-                    <input type="text" class="form-control" data-trigger="change" data-required="true" data-type="url" placeholder="website">
+                    <p>svn信息</p>
+                    {{ form.svninfo }}
                   </div>
                   <div class="step-pane" id="step2">
-                    <p>Your email:</p>
-                    <input type="text" class="form-control" data-trigger="change" data-required="true" data-type="email" placeholder="email address">
+                    <p>简单描述</p>
+                    {{ form.explain }}
                   </div>
-                  <div class="step-pane" id="step3">This is step 3</div>
+                  <div class="step-pane" id="step3">
+                    <p>审核人员</p>
+                    {{ form.people }}
+                  </div>
+                    <p>describtion</p>
                 </form>
                 <div class="actions m-t">
                   <button type="button" class="btn btn-default btn-sm btn-prev" data-target="#form-wizard" data-wizard="previous" disabled="disabled">Prev</button>

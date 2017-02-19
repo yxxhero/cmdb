@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect
 from django.template.context_processors import request
 from django.http.response import HttpResponse
 from django.shortcuts import render_to_response
-from forms import userregister
+from forms import userregister,codecommit
 from models import userinfo,hostinfo,saltcommandhistory
 from django.utils.safestring import mark_safe
 import json
@@ -157,3 +157,8 @@ def filterhistory(request):
             resultlist.append({"id":item.id,"username":item.username,"createtime":item.createtime,"minions":item.minions,"miniontype":item.miniontype,"module":item.module,"arg":item.arg})
         resultdata=json.dumps(resultlist,cls=DateTimeEncoder)
         return HttpResponse(resultdata)
+@checklogin
+def codepublish(request):
+    username=request.session['login_info']['username']
+    return render_to_response('codepublish.html',{"username":username,"form":codecommit})
+    
