@@ -33,3 +33,11 @@ class saltcommandhistory(models.Model):
     class Meta:
         verbose_name = '命令历史'
         verbose_name_plural = '命令历史'
+class codeupdate(models.Model):
+    commituser=models.CharField(max_length=255)
+    svninfo=models.CharField(max_length=255)
+    describtion=models.CharField(max_length=255)
+    auditor=models.CharField(max_length=255)
+    status=models.BooleanField(default=0)
+    Createtime=models.DateTimeField(auto_now_add=True)
+    Updatetime=models.DateTimeField(auto_now = True)    
