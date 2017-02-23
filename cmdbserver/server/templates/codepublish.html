@@ -2,6 +2,7 @@
 {% block title %}cmdb{% endblock %}
 {% block css %}
 <link rel="stylesheet" href="/static/css/app.v2.css" type="text/css" />
+<link rel="stylesheet" href="/static/js/layer/skin/default/layer.css" type="text/css" />
 <link rel="stylesheet" href="/static/css/font.css" type="text/css" cache="false" />
 <link rel="stylesheet" href="/static/js/datatables/datatables.css" type="text/css" cache="false">
 <link rel="stylesheet" href="/static/js/fuelux/fuelux.css" type="text/css" cache="false">
@@ -71,7 +72,7 @@
                 </form>
                 <div class="actions m-t">
                   <button type="button" class="btn btn-default btn-sm btn-prev" data-target="#form-wizard" data-wizard="previous" disabled="disabled">Prev</button>
-                  <button type="button" class="btn btn-default btn-sm btn-next" data-target="#form-wizard" data-wizard="next" data-last="Finish">Next</button>
+                  <button id="submitbutton" type="button" class="btn btn-default btn-sm btn-next" data-target="#form-wizard" data-wizard="next" data-last="Finish">Next</button>
                 </div>
               </div>
             </div>
@@ -81,6 +82,28 @@
 {% endblock %}
 {% block scripts %}
 <script src="/static/js/app.v2.js"></script> 
+<script src="/static/js/layer/layer.js"></script>
+<script>
+$("#submitbutton").click(
+    function () { 
+        if ($(this).html()=="Finish")
+    {
+        var index = layer.load(3);
+        var svninfo=$('#svnaddr').val();
+        var explain=$("#explain").val();
+        var people=$('#people option:selected').val();
+        $.ajax({
+          url:'/putcodecommit/',
+          data:{'svninfo':svninfo,'explain':explain,'people':people},
+          type:'POST',
+          success:function(callback){
+          layer.close(index); 
+  }
+  });
+        console.log("可以提交")
+  }
+})
+</script>
 <script src="/static/js/fuelux/fuelux.js" cache="false"></script>
 <script src="/static/js/datatables/jquery.dataTables.min.js" cache="false"></script>
 </script><script src="/static/js/parsley/parsley.min.js" cache="false"></script>

@@ -4,7 +4,7 @@ from django.template.context_processors import request
 from django.http.response import HttpResponse
 from django.shortcuts import render_to_response
 from forms import userregister,codecommit
-from models import userinfo,hostinfo,saltcommandhistory
+from models import userinfo,hostinfo,saltcommandhistory,codeupdate
 from django.utils.safestring import mark_safe
 import json
 import salt.client 
@@ -163,31 +163,22 @@ def codepublish(request):
     return render_to_response('codepublish.html',{"username":username,"form":codecommit})
 @checklogin
 def commitupdate(request):
+    ret={}
     form=codecommit()
+    username=request.session['login_info']['username']
     print request.method
     if request.method == 'POST':
-        register_form=codecommit(request.POST)
-        if register_form.is_valid():
-            register_dic=register_form.clean()
-            print register_dic
+        code_form=codecommit(request.POST)
+        if code_form.is_valid():
+            code_dic=code_form.clean()
             return HttpResponse("ok")
-#            num=userinfo.objects.filter(Name=register_dic['Name'],Password=register_dic['Password']).count()
-#            if num >= 1:
-#                message='用户已存在'
-#                return render_to_response('signup.html',{'user':form,'errormessage':message})
-#            else:
-#                try:
-#                    userinfo.objects.create(**register_dic)
-#                except Exception,e:
-#                    return render_to_response('signup.html',{'user':form,'errormessage':e.message})
-#                else:
-#                    message='注册成功'
-#                    return render_to_response('signup.html',{'user':form,'errormessage':message})
-#        else:
-#            error_msg=register_form.errors.as_json()
-#            ret['error']=json.loads(error_msg)
-#            warn_item=ret['error'].keys()[0]
-#            message=ret['error'][warn_item][0]['message']
-#            return render_to_response('signup.html',{'user':form,'errormessage':message})
-#    else:
-#        return render_to_response('signup.html',{'user':form}) 
+            try:
+                codeupdate.objects.create(commituser=commituser,svninfo=code_dic['svninfo'],describtion=code_dic['explain'],auditor=code_dic['people'])
+            except Exception,e:
+                ret['status']=0
+                ret['message']=e.message
+                return HttpResponse(json.dumps(ret)) 
+            else:
+                ret['status']=1
+                ret['message']='code has commit.'
+                return HttpResponse(json.dumps(ret)) 
