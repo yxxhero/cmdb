@@ -36,8 +36,9 @@ def index(request):
             i.status=mark_safe('<i class="fa fa-circle warn_status" aria-hidden="true"></i>')
         hostlist.append(i)
     hostnum=hostinfo.objects.all().count()
+    updatenum=codeupdate.objects.all().count()
     username=request.session['login_info']['username']
-    return render_to_response("index.html",{'username':username,'hostlist':hostlist,'hostnum':hostnum})
+    return render_to_response("index.html",{'username':username,'hostlist':hostlist,'hostnum':hostnum,"updatenum":updatenum})
 def login(request):
     return render_to_response("signin.html")
 def register(request):
@@ -135,8 +136,9 @@ def saltcontrol(request):
 @checklogin
 def showcmdhistory(request):
     username=request.session['login_info']['username']
+    updatenum=codeupdate.objects.all().count()
     cmdhistoryresult=saltcommandhistory.objects.all()
-    return render_to_response('commandhistory.html',{'cmddicts':cmdhistoryresult,"username":username})
+    return render_to_response('commandhistory.html',{'cmddicts':cmdhistoryresult,"username":username,"updatenum":updatenum})
 @checklogin
 def saltconfig(request):
     username=request.session['login_info']['username']
@@ -160,7 +162,8 @@ def filterhistory(request):
 @checklogin
 def codepublish(request):
     username=request.session['login_info']['username']
-    return render_to_response('codepublish.html',{"username":username,"form":codecommit})
+    updatenum=codeupdate.objects.all().count()
+    return render_to_response('codepublish.html',{"username":username,"form":codecommit,"updatenum":updatenum})
 @checklogin
 def commitupdate(request):
     ret={}
@@ -171,12 +174,12 @@ def commitupdate(request):
         code_form=codecommit(request.POST)
         if code_form.is_valid():
             code_dic=code_form.clean()
-            return HttpResponse("ok")
             try:
-                codeupdate.objects.create(commituser=commituser,svninfo=code_dic['svninfo'],describtion=code_dic['explain'],auditor=code_dic['people'])
+                codeupdate.objects.create(commituser=username,svninfo=code_dic['svninfo'],describtion=code_dic['explain'],auditor=code_dic['people'])
             except Exception,e:
                 ret['status']=0
                 ret['message']=e.message
+                print e.message
                 return HttpResponse(json.dumps(ret)) 
             else:
                 ret['status']=1
