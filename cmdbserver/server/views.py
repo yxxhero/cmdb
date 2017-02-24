@@ -165,6 +165,11 @@ def codepublish(request):
     updatenum=codeupdate.objects.all().count()
     return render_to_response('codepublish.html',{"username":username,"form":codecommit,"updatenum":updatenum})
 @checklogin
+def commitcount(request):
+    username=request.session['login_info']['username']
+    updatenum=codeupdate.objects.all().count()
+    return render_to_response('updatecount.html',{"username":username,"updatenum":updatenum})
+@checklogin
 def commitupdate(request):
     ret={}
     form=codecommit()
@@ -174,6 +179,7 @@ def commitupdate(request):
         code_form=codecommit(request.POST)
         if code_form.is_valid():
             code_dic=code_form.clean()
+            print code_dic
             try:
                 codeupdate.objects.create(commituser=username,svninfo=code_dic['svninfo'],describtion=code_dic['explain'],auditor=code_dic['people'])
             except Exception,e:
@@ -185,3 +191,7 @@ def commitupdate(request):
                 ret['status']=1
                 ret['message']='code has commit.'
                 return HttpResponse(json.dumps(ret)) 
+        else:
+            ret['status']=0
+            ret['message']="illegal data."
+            return HttpResponse(json.dumps(ret))
