@@ -76,14 +76,45 @@
                 </div>
               </div>
             </div>
+           <section class="panel panel-default">
+              <header class="panel-heading font-bold">更新频率统计</header>
+              <div class="panel-body">
+                <div id="container" style="height:250px"></div>
+              </div>
+              <footer class="panel-footer bg-white">
+                <div class="row text-center no-gutter">
+                  <div class="col-xs-3 b-r b-light">
+                    <p class="h3 font-bold m-t">5,860</p>
+                    <p class="text-muted">Orders</p>
+                  </div>
+                  <div class="col-xs-3 b-r b-light">
+                    <p class="h3 font-bold m-t">10,450</p>
+                    <p class="text-muted">Sellings</p>
+                  </div>
+                  <div class="col-xs-3 b-r b-light">
+                    <p class="h3 font-bold m-t">21,230</p>
+                    <p class="text-muted">Items</p>
+                  </div>
+                  <div class="col-xs-3">
+                    <p class="h3 font-bold m-t">7,230</p>
+                    <p class="text-muted">Customers</p>
+                  </div>
+                </div>
+              </footer>
+            </section>
+
           </section>
         </section>
         <a href="#" class="hide nav-off-screen-block" data-toggle="class:nav-off-screen" data-target="#nav"></a> </section>
 {% endblock %}
 {% block scripts %}
 <script src="/static/js/app.v2.js"></script> 
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://cdn.hcharts.cn/highchartsmodules/data.js"></script>
 <script src="/static/js/layer/layer.js"></script>
 <script>
+$(document).ready(function() { 
 $("#submitbutton").click(
     function () { 
         if ($(this).html()=="Finish")
@@ -110,6 +141,58 @@ $("#submitbutton").click(
         console.log("可以提交")
   }
 })
+   var title = {
+      text: '每天更新频率'   
+   };
+   var subtitle = {
+      text: 'Source: dzhd'
+   };
+   var xAxis = {
+      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+   };
+   var yAxis = {
+      title: {
+         text: 'times'
+      }
+   };
+   var legend= {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        };
+   var plotOptions = {
+      line: {
+         dataLabels: {
+            enabled: true
+         },   
+         enableMouseTracking: true
+      }
+   };
+   var exporting={
+            enabled: true
+        };
+   var series= [{
+         name: 'Tokyo',
+         data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+      }, {
+         name: 'London',
+         data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+      }
+   ];
+   
+   var json = {};
+   json.exporting=exporting;
+   json.legend=legend;
+   json.title = title;
+   json.subtitle = subtitle;
+   json.xAxis = xAxis;
+   json.yAxis = yAxis;  
+   json.series = series;
+   json.plotOptions = plotOptions;
+   $('#container').highcharts(json);
+});
 </script>
 <script src="/static/js/fuelux/fuelux.js" cache="false"></script>
 <script src="/static/js/datatables/jquery.dataTables.min.js" cache="false"></script>

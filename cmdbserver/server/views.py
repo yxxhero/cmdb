@@ -167,8 +167,19 @@ def codepublish(request):
 @checklogin
 def commitcount(request):
     username=request.session['login_info']['username']
+    updateresult=codeupdate.objects.all()
     updatenum=codeupdate.objects.all().count()
-    return render_to_response('updatecount.html',{"username":username,"updatenum":updatenum})
+    result_list=[]
+    for item in updateresult:
+        peoplename=userinfo.objects.filter(id=item.auditor).values_list("Name")[0][0] 
+        if item.status==1:
+            status=mark_safe('<button class="layui-btn layui-btn-mini layui-btn-radius layui-btn-normal">已审核</button>')
+            result_list.append({"commituser":item.commituser,"svninfo":item.svninfo,"describtion":item.describtion,"auditor":peoplename,"status":status,"Createtime":item.Createtime})
+        else:
+            status=mark_safe('<button class="layui-btn layui-btn-mini layui-btn-radius layui-btn-danger">未审核</button>')
+            result_list.append({"commituser":item.commituser,"svninfo":item.svninfo,"describtion":item.describtion,"auditor":peoplename,"status":status,"Createtime":item.Createtime}) 
+    print result_list
+    return render_to_response('updatecount.html',{"username":username,"updatenum":updatenum,"result_list":result_list})
 @checklogin
 def commitupdate(request):
     ret={}

@@ -56,22 +56,16 @@
                  </tr> 
                </thead>
                <tbody>
+                {% for item in result_list%}
                  <tr>
-                   <td>贤心</td>
-                   <td>2016-11-29</td>
-                   <td>人生就像是一场修行</td>
-                   <td>人生就像是一场修行</td>
-                   <td>人生就像是一场修行</td>
-                   <td>人生就像是一场修行</td>
+                   <td>{{ item.commituser }}</td>
+                   <td>{{ item.svninfo }}</td>
+                   <td>{{ item.describtion }}</td>
+                   <td>{{ item.auditor }}</td>
+                   <td>{{ item.status }}</td>
+                   <td>{{ item.Createtime|date:"Y-m-d H:i:s" }}</td>
                  </tr>
-                 <tr>
-                   <td>贤心</td>
-                   <td>2016-11-29</td>
-                   <td>人生就像是一场修行</td>
-                   <td>人生就像是一场修行</td>
-                   <td>人生就像是一场修行</td>
-                   <td>人生就像是一场修行</td>
-                 </tr>
+                 {% endfor %}
                </tbody>
              </table>
           </section>
