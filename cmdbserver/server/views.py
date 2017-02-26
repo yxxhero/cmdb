@@ -6,9 +6,12 @@ from django.shortcuts import render_to_response
 from forms import userregister,codecommit
 from models import userinfo,hostinfo,saltcommandhistory,codeupdate
 from django.utils.safestring import mark_safe
+from django.db import connection
+from django.db.models import Count
 import json
 import salt.client 
 from datetime import datetime
+from datetime import timedelta 
 import salt.config
 class DateTimeEncoder(json.JSONEncoder):
     def default(self,o):
@@ -24,6 +27,16 @@ def checklogin(func):
         else:
             return render_to_response("signin.html")
     return warper
+#获得时间序列
+def getdatelist(begin_date,end_date):
+    date_list = []
+    begin_date = datetime.strptime(begin_date, "%Y-%m-%d")
+    end_date = datetime.strptime(end_date, "%Y-%m-%d")
+    while begin_date <= end_date:
+        date_str = begin_date.strftime("%Y-%m-%d")
+        date_list.append(date_str)
+        begin_date += timedelta(days=1)
+    return date_list
 ######################################################################
 @checklogin        
 def index(request):
@@ -163,7 +176,15 @@ def filterhistory(request):
 def codepublish(request):
     username=request.session['login_info']['username']
     updatenum=codeupdate.objects.all().count()
-    return render_to_response('codepublish.html',{"username":username,"form":codecommit,"updatenum":updatenum})
+    start_date=(datetime.now()+timedelta(days=-7)).strftime('%Y-%m-%d')
+    end_date=datetime.now().strftime('%Y-%m-%d')
+    datelist=getdatelist(start_date,end_date)
+    select = {'day': connection.ops.date_trunc_sql('day', 'Createtime')}
+    result=codeupdate.objects.extra(select=select).values('day','commituser').annotate(number=Count('svninfo'))
+    user_list=codeupdate.objects.values('commituser').distinct()
+    print user_list[0]['commituser']
+    print result
+    return render_to_response('codepublish.html',{"username":username,"form":codecommit,"updatenum":updatenum,"datetimelist":datelist})
 @checklogin
 def commitcount(request):
     username=request.session['login_info']['username']
