@@ -178,7 +178,6 @@ def commitcount(request):
         else:
             status=mark_safe('<button class="layui-btn layui-btn-mini layui-btn-radius layui-btn-danger">未审核</button>')
             result_list.append({"commituser":item.commituser,"svninfo":item.svninfo,"describtion":item.describtion,"auditor":peoplename,"status":status,"Createtime":item.Createtime}) 
-    print result_list
     return render_to_response('updatecount.html',{"username":username,"updatenum":updatenum,"result_list":result_list})
 @checklogin
 def commitupdate(request):
