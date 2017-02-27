@@ -13,6 +13,7 @@ import salt.client
 from datetime import datetime
 from datetime import timedelta 
 import salt.config
+import os
 class DateTimeEncoder(json.JSONEncoder):
     def default(self,o):
         if isinstance(o,datetime):
@@ -155,8 +156,14 @@ def showcmdhistory(request):
 @checklogin
 def saltconfig(request):
     username=request.session['login_info']['username']
-    master_ops = salt.config.client_config('/etc/salt/master')
-    return render_to_response('saltconfig.html',{"username":username,"dicts":master_ops})
+    if os.path.exists('/tmp/saltconf.tmp'):
+        master_conf=json.load(open('/tmp/saltconf.tmp','r'))
+    else:
+        master_ops = salt.config.client_config('/etc/salt/master')
+        master_conf={"interface":master_ops['interface'],"publish_port":master_ops["publish_port"],"max_open_files":master_ops["max_open_files"],"worker_threads":master_ops["worker_threads"],"ret_port":master_ops["ret_port"],"pidfile":master_ops["pidfile"],"root_dir":master_ops["root_dir"]}
+        with open('/tmp/saltconf.tmp','w') as fd:
+            json.dump(master_conf,fd)
+    return render_to_response('saltconfig.html',{"username":username,"dicts":master_conf})
 @checklogin
 def saltadmin(request):
     username=request.session['login_info']['username']

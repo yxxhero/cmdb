@@ -10,4 +10,4 @@ class userregister(forms.Form):
 class codecommit(forms.Form):
     svninfo=forms.CharField(max_length=256,error_messages={'required':u'名称不能为空','max_length':u'名称最多为20个字符'},widget=forms.TextInput(attrs={'class':"form-control",'id':"svnaddr",'data-trigger':"change",'data-required':"true",'placeholder':"svn address"}))
     explain=forms.CharField(max_length=256,error_messages={'required':u'名称不能为空','max_length':u'名称最多为20个字符'},widget=forms.TextInput(attrs={'class':"form-control",'data-trigger':"change",'id':"explain",'data-required':"true",'placeholder':"svn address"}))
-    people=forms.ChoiceField(label="审核人",required=True, choices=userinfo.objects.all().values_list('id','Name'),widget=forms.Select(attrs={'id':"people"}))
+    people=forms.ChoiceField(label="审核人",required=True, choices=userinfo.objects.all().values_list('id','Name'),widget=forms.Select(attrs={'id':"people","lay-verify":""}))

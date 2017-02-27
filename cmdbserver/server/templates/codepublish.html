@@ -1,6 +1,7 @@
 ﻿{% extends "base.html" %}
 {% block title %}cmdb{% endblock %}
 {% block css %}
+<link rel="stylesheet" href="/static/layui/css/layui.css" type="text/css" />
 <link rel="stylesheet" href="/static/css/app.v2.css" type="text/css" />
 <link rel="stylesheet" href="/static/js/layer/skin/default/layer.css" type="text/css" />
 <link rel="stylesheet" href="/static/css/font.css" type="text/css" cache="false" />
@@ -56,7 +57,7 @@
                 </ul>
               </div>
               <div class="step-content">
-                <form action="/putcodecommit/"  method='post'>
+                <form action="/putcodecommit/"  method='post' class="layui-form">
                   <div class="step-pane active" id="step1">
                     <p>svn信息</p>
                     {{ form.svninfo }}
@@ -109,12 +110,16 @@
 {% endblock %}
 {% block scripts %}
 <script src="/static/js/app.v2.js"></script> 
+<script src="/static/layui/layui.js"></script>
 <script src="/static/js/highcharts/code/highcharts.js"></script>
 <script src="/static/js/highcharts/code/modules/exporting.js"></script>
 <script src="/static/js/highcharts/code/modules/data.js"></script>
 <script src="/static/js/layer/layer.js"></script>
 <script>
 $(document).ready(function() { 
+layui.use('form', function(){
+      var form = layui.form();
+});
 $("#submitbutton").click(
     function () { 
         if ($(this).html()=="Finish")
