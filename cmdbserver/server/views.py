@@ -179,12 +179,24 @@ def codepublish(request):
     start_date=(datetime.now()+timedelta(days=-7)).strftime('%Y-%m-%d')
     end_date=datetime.now().strftime('%Y-%m-%d')
     datelist=getdatelist(start_date,end_date)
-    select = {'day': connection.ops.date_trunc_sql('day', 'Createtime')}
-    result=codeupdate.objects.extra(select=select).values('day','commituser').annotate(number=Count('svninfo'))
     user_list=codeupdate.objects.values('commituser').distinct()
+    select = {'day': connection.ops.date_trunc_sql('day', 'Createtime')}
+    data_list=[]
+    for user in user_list:
+        result=codeupdate.objects.extra(select=select).filter(commituser=user['commituser']).values('day').annotate(number=Count('svninfo'))
+        num_list=[]
+        for i in range(len(datelist)):
+            num_list.append(0)
+#        for d in datelist:
+        for num in result:
+            if num['day'].strftime('%Y-%m-%d') in datelist:
+                dindex=datelist.index(num['day'].strftime('%Y-%m-%d'))
+                num_list[dindex]=(num['number'])
+        data_list.append({"name":str(user['commituser']),"data":num_list})
+    print data_list 
+    print datelist
     print user_list[0]['commituser']
-    print result
-    return render_to_response('codepublish.html',{"username":username,"form":codecommit,"updatenum":updatenum,"datetimelist":datelist})
+    return render_to_response('codepublish.html',{"username":username,"form":codecommit,"updatenum":updatenum,"datetimelist":datelist,"datalist":data_list})
 @checklogin
 def commitcount(request):
     username=request.session['login_info']['username']

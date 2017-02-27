@@ -172,14 +172,16 @@ $("#submitbutton").click(
    var exporting={
             enabled: true
         };
-   var series= [{
-         name: 'Tokyo',
-         data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2]
-      }, {
-         name: 'London',
-         data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0]
-      }
-   ];
+   var series=  {{ datalist|safe }}; 
+   var  tooltip = {
+          crosshairs: {
+                width: 2,
+                color: 'gray',
+                dashStyle: 'shortdot'
+                },
+       shared:true
+       };
+  
    
    var json = {};
    json.exporting=exporting;
@@ -190,6 +192,7 @@ $("#submitbutton").click(
    json.yAxis = yAxis;  
    json.series = series;
    json.plotOptions = plotOptions;
+   json.tooltip=tooltip
    $('#container').highcharts(json);
 });
 </script>
