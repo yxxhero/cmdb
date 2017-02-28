@@ -46,7 +46,7 @@
             </ul>
             <section class="panel panel-default">
               <header class="panel-heading">Minion Configure<i class="fa fa-info-sign text-muted" data-toggle="tooltip" data-placement="bottom" ></i> </header>
-              <div class="table-responsive">
+              <div class="table-responsive layui-form">
                 <table class="table table-striped m-b-none">
                   <thead>
                   <th><label for="minion">请输入minions：</label></th>
@@ -57,10 +57,11 @@
                   </thead>
                   <tbody>
                     <tr>
-                    <td><input id='minion' style='width:102px' type="text" name="minion"/></td>
+                    <td><input id='minion' style='width:102px' type="text" name="minion" class="layui-input"/></td>
                     <td>
-                                <select name="miniontype" id='miniontype'>
-                                    <option value="glob">glob</option>
+                                <select name="miniontype" id='miniontype' lay-verify="" lay-search>
+                                   <option value="">请选择类型</option>
+                                    <option value="glob" selected>glob</option>
                                     <option value="nodegroup">nodegroup</option>
                                     <option value="pcre">pcre</option>
                                     <option value="list">list</option>
@@ -70,9 +71,9 @@
                                     <option value="compound">compound</option>
                                 </select>
                     </td>
-                    <td><input type="text" id='module' name="module"/></td>
-                    <td><input  id='arg' type="text" name="arg"/></td>
-                    <td><button type="button" class="layui-btn layui-btn-mini" value="Submit" id="minionsubmit">Submit</button></td>
+                    <td><input type="text" id='module' name="module" class="layui-input"/></td>
+                    <td><input  id='arg' type="text" name="arg" class="layui-input"/></td>
+                    <td><button type="button" class="layui-btn" value="Submit" id="minionsubmit">Submit</button></td>
                     </tr>
                   </tbody>
                 </table>
@@ -113,6 +114,9 @@
 <script src="/static/js/sortable/jquery.sortable.js" cache="false"></script>
 <script>
 $(document).ready(function () {
+    layui.use('form', function(){
+          var form = layui.form();
+    });
             $('#minionsubmit').on('click', function(){
                 console.log('yes')
                 var minion=$('#minion').val();
