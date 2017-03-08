@@ -1,0 +1,63 @@
+﻿{% extends "base.html" %}
+{% block title %}cmdb{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="/static/css/app.v2.css" type="text/css" />
+<link rel="stylesheet" href="/static/js/calendar/bootstrap_calendar.css" type="text/css" cache="false" />
+<link rel="stylesheet" href="/static/js/datatables/datatables.css" type="text/css" cache="false">
+<link rel="stylesheet" href="/static/css/font.css" type="text/css" cache="false" />
+{% endblock %}
+{% block menusection %}
+<section class="w-f scrollable">
+            <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0" data-size="5px" data-color="#333333"> <!-- nav -->
+              <nav class="nav-primary hidden-xs">
+                <ul class="nav">
+                  <li class="active"> <a href="/" class="active"> <i class="fa fa-dashboard icon"> <b class="bg-danger"></b> </i> <span>主机信息实时概览</span> </a> </li>
+                  <li > <a href="notebook.html" > <i class="fa fa-rss icon"> <b class="bg-info"></b> </i> <span>Notes</span> </a> </li>
+                </ul>
+              </nav>
+              <!-- / nav --> </div>
+          </section>
+{% endblock %}
+{% block content %}
+        <section class="vbox">
+          <section class="scrollable padder">
+            <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+              <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
+              <li class="active">资产概览</li>
+            </ul>
+            <section class="panel panel-default">
+            </section>
+          </section>
+        </section>
+        <a href="#" class="hide nav-off-screen-block" data-toggle="class:nav-off-screen" data-target="#nav"></a> </section>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/app.v2.js"></script> 
+<script src="/static/js/datatables/jquery.dataTables.min.js" cache="false"></script>
+<script src="/static/js/charts/easypiechart/jquery.easy-pie-chart.js" cache="false"></script> 
+<script src="/static/js/charts/sparkline/jquery.sparkline.min.js" cache="false"></script>
+<script src="/static/js/charts/flot/jquery.flot.min.js" cache="false"></script> 
+<script src="/static/js/charts/flot/jquery.flot.tooltip.min.js" cache="false"></script>
+<script src="/static/js/charts/flot/jquery.flot.resize.js" cache="false"></script> 
+<script src="/static/js/charts/flot/jquery.flot.grow.js" cache="false"></script> 
+<script src="/static/js/charts/flot/demo.js" cache="false"></script>
+<script src="/static/js/calendar/bootstrap_calendar.js" cache="false"></script> 
+<script src="/static/js/calendar/demo.js" cache="false"></script> 
+<script src="/static/js/sortable/jquery.sortable.js" cache="false"></script>
+<script>
+    $('.percentage').easyPieChart({
+        animate: 1000
+    });
+    $('.percentage-light').easyPieChart({
+        barColor: function(percent) {
+            percent /= 100;
+            return "rgb(" + Math.round(255 * (1-percent)) + ", " + Math.round(255 * percent) + ", 0)";
+        },
+        trackColor: '#666',
+        scaleColor: '#666',
+        lineCap: 'butt',
+        lineWidth: 20,
+        animate: 1000
+    });
+</script>
+{% endblock %}
