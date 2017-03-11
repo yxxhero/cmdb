@@ -1,6 +1,7 @@
 ﻿{% extends "base.html" %}
 {% block title %}cmdb{% endblock %}
 {% block css %}
+<link rel="stylesheet" href="/static/layui/css/layui.css" type="text/css"/>
 <link rel="stylesheet" href="/static/css/app.v2.css" type="text/css" />
 <link rel="stylesheet" href="/static/js/calendar/bootstrap_calendar.css" type="text/css" cache="false" />
 <link rel="stylesheet" href="/static/js/datatables/datatables.css" type="text/css" cache="false">
@@ -35,14 +36,237 @@
                 <div class="col-sm-6 col-md-3 padder-v b-r b-light lt"> <span class="fa-stack fa-2x pull-left m-r-sm"> <i class="fa fa-circle fa-stack-2x icon-muted"></i> <i class="fa fa-clock-o fa-stack-1x text-white"></i> </span> <a class="clear" href="#"> <span class="h3 block m-t-xs"><strong>31:50</strong></span> <small class="text-muted text-uc">Left to exit</small> </a> </div>
               </div>
             </section>
-            <section class="panel panel-default">
-            </section>
+                <table class="layui-table"  lay-skin="line">
+                    <colgroup>
+                      <col width="300">
+                      <col width="200">
+                      <col>
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th>CPU</th>
+                        <th></th>
+                      </tr> 
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Load average</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>User</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>System</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>Idle</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>I/O wait</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>Cores</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                    </tbody>
+                </table>
+                <table class="layui-table"  lay-skin="line">
+                    <colgroup>
+                      <col width="300">
+                      <col width="200">
+                      <col>
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th>Memory</th>
+                        <th></th>
+                      </tr> 
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Total</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>Available</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>Used (excl.cache&buffers)</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>Used (incl.cache&buffers)</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>Free</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                    </tbody>
+                </table>
+                <table class="layui-table"  lay-skin="line">
+                    <colgroup>
+                      <col width="300">
+                      <col width="200">
+                      <col>
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th>Network</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                      </tr> 
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Interface</td>
+                        <td>IP</td>
+                        <td>RX/s</td>
+                        <td>TX/s</td>
+                      </tr>
+                      <tr>
+                        <td>Available</td>
+                        <td>Available</td>
+                        <td>Available</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>Used (excl.cache&buffers)</td>
+                        <td>Used (excl.cache&buffers)</td>
+                        <td>Used (excl.cache&buffers)</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>Used (incl.cache&buffers)</td>
+                        <td>Used (excl.cache&buffers)</td>
+                        <td>Used (excl.cache&buffers)</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                    </tbody>
+                </table>
+                <table class="layui-table"  lay-skin="line">
+                    <colgroup>
+                      <col width="300">
+                      <col width="200">
+                      <col>
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th>Disks</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                      </tr> 
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Device</td>
+                        <td>Mounted</td>
+                        <td>Total</td>
+                        <td>Used</td>
+                        <td>Free</td>
+                      </tr>
+                      <tr>
+                        <td>Available</td>
+                        <td>Available</td>
+                        <td>Available</td>
+                        <td>Available</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>Used (excl.cache&buffers)</td>
+                        <td>Used (excl.cache&buffers)</td>
+                        <td>Available</td>
+                        <td>Used (excl.cache&buffers)</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>Used (incl.cache&buffers)</td>
+                        <td>Used (excl.cache&buffers)</td>
+                        <td>Available</td>
+                        <td>Used (excl.cache&buffers)</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                    </tbody>
+                </table>
+                <table class="layui-table"  lay-skin="line">
+                    <colgroup>
+                      <col width="300">
+                      <col width="200">
+                      <col>
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th>Swap</th>
+                        <th></th>
+                      </tr> 
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Total</td>
+                        <td>xxx</td>
+                      </tr>
+                      <tr>
+                        <td>User</td>
+                        <td>Available</td>
+                      <tr>
+                        <td>Free</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>Swapped in</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                      <tr>
+                        <td>Swapped out</td>
+                        <td>2016-11-29</td>
+                      </tr>
+                    </tbody>
+                </table>
+                <table class="layui-table"  lay-skin="line">
+                    <colgroup>
+                      <col width="300">
+                      <col width="200">
+                      <col width="200">
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th>Users</th>
+                        <th></th>
+                      </tr> 
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>User</td>
+                        <td>session started</td>
+                        <td>Host</td>
+                      </tr>
+                      <tr>
+                        <td>session started</td>
+                        <td>session started</td>
+                        <td>Available</td>
+                      <tr>
+                        <td>Host</td>
+                        <td>Host</td>
+                        <td>2016-11-29</td>
+                      </tr
+                    </tbody>
+                </table>
           </section>
         </section>
         <a href="#" class="hide nav-off-screen-block" data-toggle="class:nav-off-screen" data-target="#nav"></a> </section>
 {% endblock %}
 {% block scripts %}
 <script src="/static/js/app.v2.js"></script> 
+<script src="/static/layui/layui.js"></script>
 <script src="/static/js/datatables/jquery.dataTables.min.js" cache="false"></script>
 <script src="/static/js/charts/easypiechart/jquery.easy-pie-chart.js" cache="false"></script> 
 <script src="/static/js/charts/sparkline/jquery.sparkline.min.js" cache="false"></script>
@@ -54,20 +278,4 @@
 <script src="/static/js/calendar/bootstrap_calendar.js" cache="false"></script> 
 <script src="/static/js/calendar/demo.js" cache="false"></script> 
 <script src="/static/js/sortable/jquery.sortable.js" cache="false"></script>
-<script>
-    $('.percentage').easyPieChart({
-        animate: 1000
-    });
-    $('.percentage-light').easyPieChart({
-        barColor: function(percent) {
-            percent /= 100;
-            return "rgb(" + Math.round(255 * (1-percent)) + ", " + Math.round(255 * percent) + ", 0)";
-        },
-        trackColor: '#666',
-        scaleColor: '#666',
-        lineCap: 'butt',
-        lineWidth: 20,
-        animate: 1000
-    });
-</script>
 {% endblock %}
