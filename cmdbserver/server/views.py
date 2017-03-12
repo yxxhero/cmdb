@@ -170,8 +170,9 @@ def saltadmin(request):
     return render_to_response('saltadmin.html',{"username":username})
 @checklogin
 def hoststatus(request):
+    ip=request.GET.get('ip',None).split('/')[0]
     username=request.session['login_info']['username']
-    return render_to_response('hoststatus.html',{"username":username})
+    return render_to_response('hoststatus.html',{"username":username,'hostip':ip})
 @checklogin
 def filterhistory(request):
     st=request.POST.get("st",None)

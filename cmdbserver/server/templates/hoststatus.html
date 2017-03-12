@@ -12,7 +12,7 @@
             <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0" data-size="5px" data-color="#333333"> <!-- nav -->
               <nav class="nav-primary hidden-xs">
                 <ul class="nav">
-                  <li class="active"> <a href="/" class="active"> <i class="fa fa-dashboard icon"> <b class="bg-danger"></b> </i> <span>主机信息实时概览</span> </a> </li>
+                    <li class="active"> <a href="/hostinfoview/?ip={{hostip}}" class="active"> <i class="fa fa-dashboard icon"> <b class="bg-danger"></b> </i> <span>主机信息实时概览</span> </a> </li>
                   <li > <a href="notebook.html" > <i class="fa fa-exchange icon"> <b class="bg-warning"></b> </i> <span>NetWork</span> </a> </li>
                   <li > <a href="notebook.html" > <i class="fa fa-hdd-o icon"> <b class="bg-success"></b> </i> <span>Disks</span> </a> </li>
                   <li > <a href="notebook.html" > <i class="fa fa-bars icon"> <b class="bg-info"></b> </i> <span>Processes</span> </a> </li>
@@ -26,8 +26,10 @@
           <section class="scrollable padder">
             <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
               <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
-              <li class="active">资产概览</li>
+              <li class="active">主机信息实时概览</li>
             </ul>
+            <div class="m-b-md">
+                <blockquote class="layui-elem-quote"><h3 class="m-b-none"><i class="fa fa-desktop" aria-hidden="true"></i>   {{ hostip }}</h3></div></blockquote>
             <section class="panel panel-default">
               <div class="row m-l-none m-r-none bg-light lter">
                 <div class="col-sm-6 col-md-3 padder-v b-r b-light"> <span class="fa-stack fa-2x pull-left m-r-sm"> <i class="fa fa-circle fa-stack-2x text-info"></i> <i class="fa fa-male fa-stack-1x text-white"></i> </span> <a class="clear" href="#"> <span class="h3 block m-t-xs"><strong>0</strong></span> <small class="text-muted text-uc">根分区利用率</small> </a> </div>

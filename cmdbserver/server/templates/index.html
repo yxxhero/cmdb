@@ -1,6 +1,7 @@
 ﻿{% extends "base.html" %}
 {% block title %}cmdb{% endblock %}
 {% block css %}
+<link rel="stylesheet" href="/static/layui/css/layui.css" type="text/css"/>
 <link rel="stylesheet" href="/static/css/app.v2.css" type="text/css" />
 <link rel="stylesheet" href="/static/js/calendar/bootstrap_calendar.css" type="text/css" cache="false" />
 <link rel="stylesheet" href="/static/js/datatables/datatables.css" type="text/css" cache="false">
@@ -81,7 +82,11 @@
                     <td>{{host.location}}</td>
                     <td>{{host.services}}</td>
                     <td>{{host.status}}</td>
-                    <td><i class="fa fa-pencil-square-o" style='margin-right: 10px;cursor:pointer;' aria-hidden="true"></i><i class="fa fa-trash" style="cursor:pointer;" aria-hidden="true" onclick="deletehost(this,{{host.id}})"></i></td>
+                    <td>
+                                <a href="/hostinfoview/?ip={{host.ip}}"><i class="layui-icon">&#xe629;</i></a>
+                                <i class="layui-icon" style='cursor:pointer;'>&#xe642;</i>
+                                <i class="layui-icon" style='cursor:pointer;' onclick="deletehost(this,{{host.id}})">&#xe640;</i>
+                    </td>
                     </tr>
                     {% endfor %}
                   </tbody>
@@ -117,6 +122,7 @@ function deletehost(host,id) {
 }
 </script>
 <script src="/static/js/app.v2.js"></script> 
+<script src="/static/layui/layui.js"></script>
 <script src="/static/js/datatables/jquery.dataTables.min.js" cache="false"></script>
 <script src="/static/js/charts/easypiechart/jquery.easy-pie-chart.js" cache="false"></script> 
 <script src="/static/js/charts/sparkline/jquery.sparkline.min.js" cache="false"></script>
