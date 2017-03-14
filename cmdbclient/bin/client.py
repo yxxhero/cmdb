@@ -13,6 +13,7 @@ import argparse
 import signal
 from configobj import ConfigObj
 import zerorpc
+from daemon import Daemon
 if 'threading' in sys.modules:
     del sys.modules['threading']
 import gevent
@@ -111,19 +112,22 @@ class system_info(object):
         response=urllib2.urlopen(req)
         content=response.read()
         return content
-		
+class mydeamon(Daemon):
+    def run(self,proclist):
+        gevent.joinall(proclist)
 def foo(client,url,interval,psinfo):
     while True:
         client_data=client.get_system_info(pslist)
         host_data={'host_info':client_data}
         result=client.post_system_info(url,host_data)
-        print(result)
         gevent.sleep(interval)
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='cmdbclient')
     parser.add_argument('--config',default='/opt/cmdb/cmdbclient/etc/cmdbclient.conf',type=str,help='指定配置文件')
+    parser.add_argument('action',default='run',type=str,choices=['start','restart','stop','run','status'],help='启动方式')
     args=parser.parse_args()
+    action=args.action
     gevent.signal(signal.SIGQUIT, gevent.kill)
     config_file=args.config
     config=ConfigObj(config_file,encoding='UTF8')
@@ -139,4 +143,10 @@ if __name__=='__main__':
     s.bind("tcp://0.0.0.0:4242")
     zero_daemon=gevent.spawn(s.run)
     client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
-    gevent.joinall([zero_daemon,client_daemon])
+#    gevent.joinall([zero_daemon,client_daemon])
+    daemonlist=[zero_daemon,client_daemon]
+    daemonobj=mydeamon(pidfile='/var/run/clent.pid',Debug=True)
+    if action=='start':
+        daemonobj.start(daemonlist)
+    elif action=='stop':
+        daemon.stop()

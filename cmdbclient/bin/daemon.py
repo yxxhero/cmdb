@@ -25,7 +25,7 @@ class Daemon:
             self.stdout=stdout
             self.stderr=stderr
         self.pidfile=pidfile
-    def _daemonize(self):
+    def daemonize(self):
         try:
             pid=os.fork()
             if pid > 0:
@@ -34,7 +34,7 @@ class Daemon:
             sys.stderr.write('fork #1 faid: %d (%s)\n' % (e.errno,e.strerror))
             sys.exit(1)
         os.chdir('/')
-        os.setreuid()
+        os.setsid()
         os.umask(0)
         try:
             pid=os.fork()
@@ -54,7 +54,9 @@ class Daemon:
         atexit.register(self.delpid)
         pid=str(os.getpid())
         file(self.pidfile,'w+').write('%s\n' %pid)
-    def start(self):
+    def delpid(self):
+        os.remove(self.pidfile)
+    def start(self,*args,**kwargs):
         try:
             pf=file(self.pidfile,'r')
             pid=int(pf.read().strip())
@@ -63,10 +65,10 @@ class Daemon:
             pid=None
         if pid:
             message='pidfile %s already exist. Daemon already running!\n'
-            sys.stderr.write(message,% self.pidfile)
+            sys.stderr.write(message % self.pidfile)
             sys.exit(1)
-        self._daemonize()
-        self._run()
+        self.daemonize()
+        self.run(*args,**kwargs)
     def stop(self):
         try:
             pf = file(self.pidfile,'r')
@@ -89,15 +91,9 @@ class Daemon:
                     os.remove(self.pidfile)
                 else:
                     print str(err)
-                    sys.exit(1)''
+                    sys.exit(1)
     def restart(self):
         self.stop()
-        self.start()
-    def _run(self):
+        self.start(*args,**kwargs)
+    def run(self,*args,**kwargs):
         """run your fun"""
-
-
-
-
-
-            
