@@ -207,13 +207,6 @@ class Daemon(object):
 
         self.log("Stopped")
 
-    def restart(self,*args,**kwargs):
-        """
-        Restart the daemon
-        """
-        self.stop()
-        self.start(*args,**kwargs)
-
     def get_pid(self):
         try:
             pf = open(self.pidfile, 'r')

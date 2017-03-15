@@ -153,12 +153,18 @@ if __name__=='__main__':
     elif action=='status':
         daemonobj.get_pid()
     elif action=='restart':
-        processst=daemonobj.get_pid()
-        if not processst:
+        st=daemonobj.is_running()
+        if st:
+            daemonobj.stop()
             s = zerorpc.Server(system_info())
             s.bind("tcp://0.0.0.0:4242")
             zero_daemon=gevent.spawn(s.run)
             client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
             daemonlist=[zero_daemon,client_daemon]
-#    gevent.joinall([zero_daemon,client_daemon])
-        daemonobj.restart(daemonlist)
+        else:
+            s = zerorpc.Server(system_info())
+            s.bind("tcp://0.0.0.0:4242")
+            zero_daemon=gevent.spawn(s.run)
+            client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
+            daemonlist=[zero_daemon,client_daemon]
+        daemonobj.start(daemonlist)
