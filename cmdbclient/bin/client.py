@@ -1,6 +1,5 @@
 #!/usr/bin/env python2.7
 # coding:utf-8
-from __future__ import print_function
 import commands
 import sys
 import os
@@ -145,8 +144,8 @@ if __name__=='__main__':
     client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
 #    gevent.joinall([zero_daemon,client_daemon])
     daemonlist=[zero_daemon,client_daemon]
-    daemonobj=mydeamon(pidfile='/var/run/clent.pid',Debug=True)
+    daemonobj=mydeamon(pidfile='/var/run/clent.pid')
     if action=='start':
         daemonobj.start(daemonlist)
     elif action=='stop':
-        daemon.stop()
+        daemonobj.stop()
