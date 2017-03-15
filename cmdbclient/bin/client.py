@@ -124,10 +124,9 @@ def foo(client,url,interval,psinfo):
 if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='cmdbclient')
     parser.add_argument('--config',default='/opt/cmdb/cmdbclient/etc/cmdbclient.conf',type=str,help='指定配置文件')
-    parser.add_argument('action',default='run',type=str,choices=['start','restart','stop','run','status'],help='启动方式')
+    parser.add_argument('action',type=str,choices=['start','restart','stop','run','status'],help='启动方式')
     args=parser.parse_args()
     action=args.action
-    gevent.signal(signal.SIGQUIT, gevent.kill)
     config_file=args.config
     config=ConfigObj(config_file,encoding='UTF8')
     interval=int(config['client']['interval'])
@@ -135,17 +134,31 @@ if __name__=='__main__':
     port=config['server']['server_port']
     uri=config['server']['uri']
     url='http://'+host+':'+port+uri
-    pid=config['client']['pid']
+    pidfile=config['client']['pidfile']
     pslist=config['client']['process_list'].split('^')
     client_info=system_info()
-    s = zerorpc.Server(system_info())
-    s.bind("tcp://0.0.0.0:4242")
-    zero_daemon=gevent.spawn(s.run)
-    client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
-#    gevent.joinall([zero_daemon,client_daemon])
-    daemonlist=[zero_daemon,client_daemon]
-    daemonobj=mydeamon(pidfile='/var/run/clent.pid')
+    daemonobj=mydeamon(pidfile=pidfile)
     if action=='start':
-        daemonobj.start(daemonlist)
+        processst=daemonobj.get_pid()
+        if not processst:
+            s = zerorpc.Server(system_info())
+            s.bind("tcp://0.0.0.0:4242")
+            zero_daemon=gevent.spawn(s.run)
+            client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
+            daemonlist=[zero_daemon,client_daemon]
+#    gevent.joinall([zero_daemon,client_daemon])
+            daemonobj.start(daemonlist)
     elif action=='stop':
         daemonobj.stop()
+    elif action=='status':
+        daemonobj.get_pid()
+    elif action=='restart':
+        processst=daemonobj.get_pid()
+        if not processst:
+            s = zerorpc.Server(system_info())
+            s.bind("tcp://0.0.0.0:4242")
+            zero_daemon=gevent.spawn(s.run)
+            client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
+            daemonlist=[zero_daemon,client_daemon]
+#    gevent.joinall([zero_daemon,client_daemon])
+        daemonobj.restart(daemonlist)

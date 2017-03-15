@@ -172,13 +172,11 @@ class Daemon(object):
         """
         Stop the daemon
         """
-
         if self.verbose >= 1:
             self.log("Stopping...")
 
         # Get the pid from the pidfile
         pid = self.get_pid()
-
         if not pid:
             message = "pidfile %s does not exist. Not running?\n"
             sys.stderr.write(message % self.pidfile)
@@ -209,12 +207,12 @@ class Daemon(object):
 
         self.log("Stopped")
 
-    def restart(self):
+    def restart(self,*args,**kwargs):
         """
         Restart the daemon
         """
         self.stop()
-        self.start()
+        self.start(*args,**kwargs)
 
     def get_pid(self):
         try:
@@ -225,6 +223,10 @@ class Daemon(object):
             pid = None
         except SystemExit:
             pid = None
+        if pid:
+            print('pid:%s' % pid)
+        else:
+            print('Process is stopped')
         return pid
 
     def is_running(self):
