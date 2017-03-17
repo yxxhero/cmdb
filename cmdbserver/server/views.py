@@ -13,6 +13,7 @@ import salt.client
 from datetime import datetime
 from datetime import timedelta 
 import salt.config
+import zerorpc
 import os
 class DateTimeEncoder(json.JSONEncoder):
     def default(self,o):
@@ -171,8 +172,12 @@ def saltadmin(request):
 @checklogin
 def hoststatus(request):
     ip=request.GET.get('ip',None).split('/')[0]
+    c = zerorpc.Client()
+    addr='tcp://'+ip+':4242'
+    c.connect("tcp://127.0.0.1:4242")
+    cpu=c.get_sysinfo()
     username=request.session['login_info']['username']
-    return render_to_response('hoststatus.html',{"username":username,'hostip':ip})
+    return render_to_response('hoststatus.html',{"username":username,'hostip':ip,'cpu':cpu})
 @checklogin
 def filterhistory(request):
     st=request.POST.get("st",None)
