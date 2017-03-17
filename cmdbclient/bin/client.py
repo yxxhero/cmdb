@@ -1,5 +1,9 @@
 #!/usr/bin/env python2.7
 # coding:utf-8
+import gevent
+from gevent import monkey
+monkey.patch_all()
+import socket
 import commands
 import sys
 import os
@@ -10,18 +14,14 @@ import urllib2
 import time
 import argparse
 import signal
+import logging
 from configobj import ConfigObj
 import zerorpc
-from daemon import Daemon
 if 'threading' in sys.modules:
     del sys.modules['threading']
-import gevent
-import gevent.socket
-from gevent import monkey
-monkey.patch_all()
 class system_info(object):
     def __init__(self):
-        self.system_info = {}
+        self.systeminfo = {}
         self.hostname = ''
         self.ip_dict = {}
         self.cpu_info = {}
@@ -30,6 +30,17 @@ class system_info(object):
         self.mem_info = {}
         self.disk_info = {}
 	
+    def get_sysinfo(self):
+        uptime = int(time.time() - psutil.boot_time())
+        sysinfo = {
+            'uptime': uptime,
+            'hostname': socket.gethostname(),
+            'os': platform.platform(),
+            'load_avg': os.getloadavg(),
+            'num_cpus': psutil.cpu_count()
+        }
+
+        return sysinfo
     def get_disk_info(self):
         disks=psutil.disk_partitions()
         tmp_disk_detail = {}
@@ -72,7 +83,7 @@ class system_info(object):
         return ps_list
 		
     def get_hostname(self):
-        self.hostname=gevent.socket.gethostname()
+        self.hostname=socket.gethostname()
         return self.hostname
 
     def get_ip_dict(self):
@@ -96,24 +107,29 @@ class system_info(object):
         return self.cpu_info
 
     def get_system_info(self,*args,**kwargs):
-        self.system_info['hostname'] = self.get_hostname()
-        self.system_info['ip_dict'] = self.get_ip_dict()
-        self.system_info['cpu_info'] = self.get_cpu_info()
-        self.system_info['mem_info'] = self.get_mem_info()
-        self.system_info['system_name'] = self.get_system_name()
-        self.system_info['disk_info'] = self.get_disk_info()
-        self.system_info['processlist'] = self.get_process_info(*args,**kwargs)
+        self.systeminfo['hostname'] = self.get_hostname()
+        self.systeminfo['ip_dict'] = self.get_ip_dict()
+        self.systeminfo['cpu_info'] = self.get_cpu_info()
+        self.systeminfo['mem_info'] = self.get_mem_info()
+        self.systeminfo['system_name'] = self.get_system_name()
+        self.systeminfo['disk_info'] = self.get_disk_info()
+        self.systeminfo['processlist'] = self.get_process_info(*args,**kwargs)
         
-        return self.system_info
+        return self.systeminfo
     def post_system_info(self,url,data):
         format_data=urllib.urlencode(data)
         req=urllib2.Request(url,format_data)
         response=urllib2.urlopen(req)
         content=response.read()
         return content
-class mydeamon(Daemon):
-    def run(self,proclist):
+
+LOG = logging.getLogger(__name__)
+
+
+def daemonrun(proclist):
         gevent.joinall(proclist)
+
+
 def foo(client,url,interval,psinfo):
     while True:
         client_data=client.get_system_info(pslist)
@@ -136,35 +152,12 @@ if __name__=='__main__':
     url='http://'+host+':'+port+uri
     pidfile=config['client']['pidfile']
     pslist=config['client']['process_list'].split('^')
+    logging.basicConfig(filename="daemon.log", level=logging.DEBUG)
     client_info=system_info()
-    daemonobj=mydeamon(pidfile=pidfile)
     if action=='start':
-        processst=daemonobj.get_pid()
-        if not processst:
-            s = zerorpc.Server(system_info())
-            s.bind("tcp://0.0.0.0:4242")
-            zero_daemon=gevent.spawn(s.run)
-            client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
-            daemonlist=[zero_daemon,client_daemon]
-#    gevent.joinall([zero_daemon,client_daemon])
-            daemonobj.start(daemonlist)
-    elif action=='stop':
-        daemonobj.stop()
-    elif action=='status':
-        daemonobj.get_pid()
-    elif action=='restart':
-        st=daemonobj.is_running()
-        if st:
-            daemonobj.stop()
-            s = zerorpc.Server(system_info())
-            s.bind("tcp://0.0.0.0:4242")
-            zero_daemon=gevent.spawn(s.run)
-            client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
-            daemonlist=[zero_daemon,client_daemon]
-        else:
-            s = zerorpc.Server(system_info())
-            s.bind("tcp://0.0.0.0:4242")
-            zero_daemon=gevent.spawn(s.run)
-            client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
-            daemonlist=[zero_daemon,client_daemon]
-        daemonobj.start(daemonlist)
+       s = zerorpc.Server(system_info())
+       s.bind("tcp://0.0.0.0:4242")
+       zero_daemon=gevent.spawn(s.run)
+       client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
+       daemonlist=[zero_daemon,client_daemon]
+       daemonrun(daemonlist)
