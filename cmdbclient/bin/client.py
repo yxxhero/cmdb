@@ -36,7 +36,6 @@ class system_info(object):
             'uptime': uptime,
             'hostname': socket.gethostname(),
             'os': platform.platform(),
-            'load_avg': os.getloadavg(),
             'num_cpus': psutil.cpu_count()
         }
 
@@ -103,7 +102,12 @@ class system_info(object):
     def get_cpu_info(self):
         self.cpu_info['logical_cores'] = psutil.cpu_count()
         self.cpu_info['physical_cores'] = psutil.cpu_count(logical = False)
-        self.cpu_info["cpu_usage"] = psutil.cpu_percent()
+        self.cpu_info["cpu_usage"] = psutil.cpu_percent(interval=None)
+        self.cpuinfo['load_avg']=' '.join([str(i) for i in os.getloadavg()])
+        self.cpuinfo['user']=psutil.cpu_times().user
+        self.cpuinfo['system']=psutil.cpu_times().system
+        self.cpuinfo['idle']=psutil.cpu_times().idle
+        self.cpuinfo['iowait']=psutil.cpu_times().iowait
         return self.cpu_info
 
     def get_system_info(self,*args,**kwargs):
