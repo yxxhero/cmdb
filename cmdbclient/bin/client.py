@@ -69,6 +69,7 @@ class system_info(object):
         self.mem_info['buffers'] = psutil.virtual_memory().buffers/1024/1024
         self.mem_info['cached'] = psutil.virtual_memory().cached/1024/1024
         self.mem_info['shared'] = psutil.virtual_memory().shared/1024/1024
+        self.mem_info['percent'] = psutil.virtual_memory().percent
         return self.mem_info
 
     def get_process_info(self,*args,**kwargs):
@@ -102,12 +103,12 @@ class system_info(object):
     def get_cpu_info(self):
         self.cpu_info['logical_cores'] = psutil.cpu_count()
         self.cpu_info['physical_cores'] = psutil.cpu_count(logical = False)
-        self.cpu_info["cpu_usage"] = psutil.cpu_percent(interval=None)
-        self.cpuinfo['load_avg']=' '.join([str(i) for i in os.getloadavg()])
-        self.cpuinfo['user']=psutil.cpu_times().user
-        self.cpuinfo['system']=psutil.cpu_times().system
-        self.cpuinfo['idle']=psutil.cpu_times().idle
-        self.cpuinfo['iowait']=psutil.cpu_times().iowait
+        self.cpu_info["cpu_usage"] = psutil.cpu_percent()
+        self.cpu_info['load_avg']=' '.join([str(i) for i in os.getloadavg()])
+        self.cpu_info['user']=psutil.cpu_times().user
+        self.cpu_info['system']=psutil.cpu_times().system
+        self.cpu_info['idle']=psutil.cpu_times().idle
+        self.cpu_info['iowait']=psutil.cpu_times().iowait
         return self.cpu_info
 
     def get_system_info(self,*args,**kwargs):

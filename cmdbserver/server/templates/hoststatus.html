@@ -57,23 +57,27 @@
                       </tr>
                       <tr>
                         <td>User</td>
-                        <td>haah</td>
+                        <td>{{cpu.user}}</td>
                       </tr>
                       <tr>
                         <td>System</td>
-                        <td>2016-11-29</td>
+                        <td>{{cpu.system}}</td>
                       </tr>
                       <tr>
                         <td>Idle</td>
-                        <td>2016-11-29</td>
+                        <td>{{cpu.idle}}</td>
                       </tr>
                       <tr>
                         <td>I/O wait</td>
-                        <td>2016-11-29</td>
+                        <td>{{cpu.iowait}}</td>
                       </tr>
                       <tr>
-                        <td>Cores</td>
-                        <td>2016-11-29</td>
+                        <td>logical_cores</td>
+                        <td>{{cpu.logical_cores}}</td>
+                      </tr>
+                      <tr>
+                        <td>physical_cores</td>
+                        <td>{{cpu.physical_cores}}</td>
                       </tr>
                     </tbody>
                 </table>
@@ -92,23 +96,27 @@
                     <tbody>
                       <tr>
                         <td>Total</td>
-                        <td>2016-11-29</td>
+                        <td>{{memory.total}}M</td>
                       </tr>
                       <tr>
                         <td>Available</td>
-                        <td>2016-11-29</td>
+                        <td>{{memory.available}}M</td>
                       </tr>
                       <tr>
-                        <td>Used (excl.cache&buffers)</td>
-                        <td>2016-11-29</td>
+                        <td>Used</td>
+                        <td>{{memory.used}}M</td>
                       </tr>
                       <tr>
-                        <td>Used (incl.cache&buffers)</td>
-                        <td>2016-11-29</td>
+                        <td>buffers</td>
+                        <td>{{memory.buffers}}M</td>
+                      </tr>
+                      <tr>
+                        <td>cached</td>
+                        <td>{{memory.cached}}M</td>
                       </tr>
                       <tr>
                         <td>Free</td>
-                        <td>2016-11-29</td>
+                        <td>{{memory.free}}M</td>
                       </tr>
                     </tbody>
                 </table>
