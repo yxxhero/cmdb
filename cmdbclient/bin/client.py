@@ -16,6 +16,7 @@ import argparse
 import signal
 import logging
 from configobj import ConfigObj
+from daemon import Daemon
 import zerorpc
 if 'threading' in sys.modules:
     del sys.modules['threading']
@@ -28,7 +29,7 @@ class system_info(object):
         self.system_name = ''
         self.process_info = {}
         self.mem_info = {}
-        self.disk_info = {}
+        self.disk_info =[] 
 	
     def get_sysinfo(self):
         uptime = int(time.time() - psutil.boot_time())
@@ -36,23 +37,26 @@ class system_info(object):
             'uptime': uptime,
             'hostname': socket.gethostname(),
             'os': platform.platform(),
-            'num_cpus': psutil.cpu_count()
+            'mempercent':psutil.virtual_memory().percent,
+            'cpu_usage' : psutil.cpu_percent(),
+            'root_usage':psutil.disk_usage('/').percent
         }
 
         return sysinfo
     def get_disk_info(self):
         disks=psutil.disk_partitions()
-        tmp_disk_detail = {}
+        self.disk_info=[]
         for disk in disks:
-            device = disk[0]
-            tmp_disk_detail["mount_point"] = disk[1]
-            tmp_disk_detail["fs_type"] = disk[2]
-            tmp_disk_detail["mount_options"] = disk[3]
-            tmp_disk_detail["total"] = psutil.disk_usage(disk[1])[0]/1024/1024
-            tmp_disk_detail["used"] = psutil.disk_usage(disk[1])[1]/1024/1024
-            tmp_disk_detail["free"] = psutil.disk_usage(disk[1])[2]/1024/1024
-            tmp_disk_detail["percent"] = psutil.disk_usage(disk[1])[3]/1024/1024
-            self.disk_info[device] = tmp_disk_detail
+            self.disk_info.append(
+                {'device':disk.device,
+                 'mountpoint':disk.mountpoint,
+                 'fstype':disk.fstype,
+                 'opts':disk.opts,
+                 'total':psutil.disk_usage(disk.device).total/1024/1024,
+                 'used':psutil.disk_usage(disk.device).used/1024/1024,
+                 'free':psutil.disk_usage(disk.device).free/1024/1024,
+                 'percent':psutil.disk_usage(disk.device).percent
+            })
         return self.disk_info
     
     def get_system_name(self):
@@ -69,7 +73,6 @@ class system_info(object):
         self.mem_info['buffers'] = psutil.virtual_memory().buffers/1024/1024
         self.mem_info['cached'] = psutil.virtual_memory().cached/1024/1024
         self.mem_info['shared'] = psutil.virtual_memory().shared/1024/1024
-        self.mem_info['percent'] = psutil.virtual_memory().percent
         return self.mem_info
 
     def get_process_info(self,*args,**kwargs):
@@ -103,7 +106,6 @@ class system_info(object):
     def get_cpu_info(self):
         self.cpu_info['logical_cores'] = psutil.cpu_count()
         self.cpu_info['physical_cores'] = psutil.cpu_count(logical = False)
-        self.cpu_info["cpu_usage"] = psutil.cpu_percent()
         self.cpu_info['load_avg']=' '.join([str(i) for i in os.getloadavg()])
         self.cpu_info['user']=psutil.cpu_times().user
         self.cpu_info['system']=psutil.cpu_times().system
@@ -128,11 +130,10 @@ class system_info(object):
         content=response.read()
         return content
 
-LOG = logging.getLogger(__name__)
 
-
-def daemonrun(proclist):
-        gevent.joinall(proclist)
+class pantalaimon(Daemon):
+    def run(self,proclist):
+            gevent.joinall(proclist)
 
 
 def foo(client,url,interval,psinfo):
@@ -157,12 +158,14 @@ if __name__=='__main__':
     url='http://'+host+':'+port+uri
     pidfile=config['client']['pidfile']
     pslist=config['client']['process_list'].split('^')
-    logging.basicConfig(filename="daemon.log", level=logging.DEBUG)
     client_info=system_info()
+    pineMarten = pantalaimon(pidfile)
     if action=='start':
        s = zerorpc.Server(system_info())
        s.bind("tcp://0.0.0.0:4242")
        zero_daemon=gevent.spawn(s.run)
        client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
        daemonlist=[zero_daemon,client_daemon]
-       daemonrun(daemonlist)
+#       daemonrun(daemonlist)
+#       pineMarten.start(daemonlist)
+       pineMarten.run(daemonlist)

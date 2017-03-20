@@ -175,10 +175,12 @@ def hoststatus(request):
     c = zerorpc.Client()
     addr='tcp://'+ip+':4242'
     c.connect(addr)
+    sysinfo=c.get_sysinfo()
     cpu=c.get_cpu_info()
     mem=c.get_mem_info()
+    disklist=c.get_disk_info()
     username=request.session['login_info']['username']
-    return render_to_response('hoststatus.html',{"username":username,'hostip':ip,'cpu':cpu,"memory":mem})
+    return render_to_response('hoststatus.html',{"username":username,'hostip':ip,'cpu':cpu,"memory":mem,"sysinfo":sysinfo,"disklist":disklist})
 @checklogin
 def filterhistory(request):
     st=request.POST.get("st",None)

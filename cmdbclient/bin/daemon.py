@@ -40,7 +40,7 @@ class Daemon(object):
     def __init__(self, pidfile, stdin=os.devnull,
                  stdout=os.devnull, stderr=os.devnull,
                  home_dir='.', umask=0o22, verbose=1,
-                 use_gevent=False, use_eventlet=False):
+                 use_gevent=True, use_eventlet=True):
         self.stdin = stdin
         self.stdout = stdout
         self.stderr = stderr
@@ -115,6 +115,8 @@ class Daemon(object):
 
         if self.use_gevent:
             import gevent
+            from gevent import monkey
+            monkey.patch_all()
             gevent.reinit()
             gevent.signal(signal.SIGTERM, sigtermhandler, signal.SIGTERM, None)
             gevent.signal(signal.SIGINT, sigtermhandler, signal.SIGINT, None)
