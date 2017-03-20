@@ -210,22 +210,22 @@
                     <tbody>
                       <tr>
                         <td>Total</td>
-                        <td>xxx</td>
+                        <td>{{swapinfo.total}}</td>
                       </tr>
                       <tr>
-                        <td>User</td>
-                        <td>Available</td>
+                        <td>Used</td>
+                        <td>{{swapinfo.used}}</td>
                       <tr>
                         <td>Free</td>
-                        <td>2016-11-29</td>
+                        <td>{{swapinfo.free}}</td>
                       </tr>
                       <tr>
                         <td>Swapped in</td>
-                        <td>2016-11-29</td>
+                        <td>{{swapinfo.sin}}</td>
                       </tr>
                       <tr>
                         <td>Swapped out</td>
-                        <td>2016-11-29</td>
+                        <td>{{swapinfo.sout}}</td>
                       </tr>
                     </tbody>
                 </table>
@@ -247,15 +247,13 @@
                         <td>session started</td>
                         <td>Host</td>
                       </tr>
+                    {% for user in userlist %}
                       <tr>
-                        <td>session started</td>
-                        <td>session started</td>
-                        <td>Available</td>
-                      <tr>
-                        <td>Host</td>
-                        <td>Host</td>
-                        <td>2016-11-29</td>
-                      </tr
+                        <td>{{user.user}}</td>
+                        <td>{{user.started}}</td>
+                        <td>{{user.host}}</td>
+                      </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
           </section>

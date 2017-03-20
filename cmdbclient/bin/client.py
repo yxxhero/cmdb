@@ -16,7 +16,6 @@ import argparse
 import signal
 import logging
 from configobj import ConfigObj
-from daemon import Daemon
 import zerorpc
 if 'threading' in sys.modules:
     del sys.modules['threading']
@@ -25,11 +24,13 @@ class system_info(object):
         self.systeminfo = {}
         self.hostname = ''
         self.ip_dict = {}
+        self.swap_info={}
         self.cpu_info = {}
         self.system_name = ''
         self.process_info = {}
         self.mem_info = {}
         self.disk_info =[] 
+        self.user_info=[]
 	
     def get_sysinfo(self):
         uptime = int(time.time() - psutil.boot_time())
@@ -62,6 +63,17 @@ class system_info(object):
     def get_system_name(self):
         self.system_name =''.join(platform.linux_distribution()[0:2]) 
         return self.system_name
+    def get_user_info(self):
+        self.user_info=[]
+        for user in psutil.users():
+            self.user_info.append({
+                'user':user.name,
+                'terminal':user.terminal,
+                'host':user.host,
+                'started':time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(user.started))
+            })
+        return self.user_info
+
 
     def get_mem_info(self):
         self.mem_info['total'] = psutil.virtual_memory().total/1024/1024
@@ -112,6 +124,14 @@ class system_info(object):
         self.cpu_info['idle']=psutil.cpu_times().idle
         self.cpu_info['iowait']=psutil.cpu_times().iowait
         return self.cpu_info
+    def get_swap_info(self):
+        self.swap_info['total']=psutil.swap_memory().total/1024/1024
+        self.swap_info['used']=psutil.swap_memory().used/1024/1024
+        self.swap_info['free']=psutil.swap_memory().free/1024/1024
+        self.swap_info['sin']=psutil.swap_memory().sin/1024/1024
+        self.swap_info['sout']=psutil.swap_memory().sout/1024/1024
+        return self.swap_info
+
 
     def get_system_info(self,*args,**kwargs):
         self.systeminfo['hostname'] = self.get_hostname()
@@ -121,6 +141,7 @@ class system_info(object):
         self.systeminfo['system_name'] = self.get_system_name()
         self.systeminfo['disk_info'] = self.get_disk_info()
         self.systeminfo['processlist'] = self.get_process_info(*args,**kwargs)
+        self.systeminfo['user_info'] = self.get_user_info()
         
         return self.systeminfo
     def post_system_info(self,url,data):
@@ -130,17 +151,22 @@ class system_info(object):
         content=response.read()
         return content
 
+def handler(signal_num,frame):
+    print "\nStopped."
+    sys.exit(signal_num)
+signal.signal(signal.SIGINT, handler)
 
-class pantalaimon(Daemon):
-    def run(self,proclist):
-            gevent.joinall(proclist)
-
+def daemonrun(proclist):
+    gevent.joinall(proclist)
 
 def foo(client,url,interval,psinfo):
     while True:
         client_data=client.get_system_info(pslist)
         host_data={'host_info':client_data}
-        result=client.post_system_info(url,host_data)
+        try:
+            result=client.post_system_info(url,host_data)
+        except Exception,e:
+            logging.warning("Connection refused,waitting for the server allow the connect...")
         gevent.sleep(interval)
 
 if __name__=='__main__':
@@ -159,13 +185,15 @@ if __name__=='__main__':
     pidfile=config['client']['pidfile']
     pslist=config['client']['process_list'].split('^')
     client_info=system_info()
-    pineMarten = pantalaimon(pidfile)
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s %(levelname)s %(message)s',
+                        datefmt='%a, %d %b %Y %H:%M:%S',
+                        filename='myapp.log',
+                        filemode='a')
     if action=='start':
        s = zerorpc.Server(system_info())
        s.bind("tcp://0.0.0.0:4242")
        zero_daemon=gevent.spawn(s.run)
        client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
        daemonlist=[zero_daemon,client_daemon]
-#       daemonrun(daemonlist)
-#       pineMarten.start(daemonlist)
-       pineMarten.run(daemonlist)
+       daemonrun(daemonlist)
