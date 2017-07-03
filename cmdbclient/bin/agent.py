@@ -1,8 +1,5 @@
 #!/usr/bin/env python2.7
 # coding:utf-8
-import gevent
-from gevent import monkey
-monkey.patch_all()
 import socket
 import commands
 import sys
@@ -16,7 +13,8 @@ import argparse
 import signal
 import logging
 from configobj import ConfigObj
-import zerorpc
+from daemon import Daemon
+import sched 
 if 'threading' in sys.modules:
     del sys.modules['threading']
 class system_info(object):
@@ -151,23 +149,27 @@ class system_info(object):
         content=response.read()
         return content
 
-def handler(signal_num,frame):
-    print "\nStopped."
-    sys.exit(signal_num)
-signal.signal(signal.SIGINT, handler)
 
-def daemonrun(proclist):
-    gevent.joinall(proclist)
-
-def foo(client,url,interval,psinfo):
-    while True:
-        client_data=client.get_system_info(pslist)
-        host_data={'host_info':client_data}
-        try:
-            result=client.post_system_info(url,host_data)
-        except Exception,e:
-            logging.warning("Connection refused,waitting for the server allow the connect...")
-        gevent.sleep(interval)
+def client_worker(client,url,psinfo):
+    client_data=client.get_system_info(pslist)
+    host_data={'host_info':client_data}
+    try:
+        result=client.post_system_info(url,host_data)
+    except Exception,e:
+        logging.warning(str(e))
+def perform(inc,s,client,url,psinfo):
+    s.enter(inc,0,perform,(inc,s,client,url,psinfo))
+    client_worker(client,url,psinfo)
+def rolld(inc,s,client,url,psinfo):
+    s.enter(0,0,perform,(inc,s,client,url,psinfo))
+    s.run()
+class pantalaimon(Daemon):
+    def restart(self,inc,s,client,url,psinfo):
+        self.stop()
+	self.start(client,url,psinfo)
+    def run(self,inc,s,client,url,psinfo):
+	rolld(inc,s,client,url,psinfo)
+         
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='cmdbclient')
@@ -185,15 +187,19 @@ if __name__=='__main__':
     pidfile=config['client']['pidfile']
     pslist=config['client']['process_list'].split('^')
     client_info=system_info()
+    schedule = sched.scheduler ( time.time, time.sleep ) 
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(levelname)s %(message)s',
                         datefmt='%a, %d %b %Y %H:%M:%S',
                         filename='myapp.log',
                         filemode='a')
-    if action=='start':
-       s = zerorpc.Server(system_info())
-       s.bind("tcp://0.0.0.0:4242")
-       zero_daemon=gevent.spawn(s.run)
-       client_daemon=gevent.spawn(foo,client_info,url,interval,pslist)
-       daemonlist=[zero_daemon,client_daemon]
-       daemonrun(daemonlist)
+#    schedule.enter(interval,0,client_worker,(client_info,url,pslist)) 
+    pineMarten = pantalaimon('/var/run/agent.pid')
+    if action == "start":
+        pineMarten.start(interval,schedule,client_info,url,pslist)
+    elif action == "stop":
+        pineMarten.stop()
+    elif action=="restart":
+        pineMarten.restart(interval,schedule,client_info,url,pslist)
+    elif action=="run":
+        pineMarten.run(interval,schedule,client_info,url,pslist)
