@@ -125,8 +125,7 @@ class Daemon(object):
         self.log("Started")
 
         # Write pidfile
-        atexit.register(
-            self.delpid)  # Make sure pid file is removed if we quit
+        atexit.register(self.delpid)  # Make sure pid file is removed if we quit
         pid = str(os.getpid())
         open(self.pidfile, 'w+').write("%s\n" % pid)
 

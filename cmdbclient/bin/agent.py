@@ -5,6 +5,7 @@ import commands
 import sys
 import os
 import psutil
+import atexit
 import platform
 import urllib
 import urllib2
@@ -153,6 +154,7 @@ class system_info(object):
 def client_worker(client,url,psinfo):
     client_data=client.get_system_info(pslist)
     host_data={'host_info':client_data}
+    logging.info(client_data)
     try:
         result=client.post_system_info(url,host_data)
     except Exception,e:
@@ -168,8 +170,52 @@ class pantalaimon(Daemon):
         self.stop()
 	self.start(client,url,psinfo)
     def run(self,inc,s,client,url,psinfo):
+        atexit.register(self.delpid)  # Make sure pid file is removed if we quit
+        pid = str(os.getpid())
+        open(self.pidfile, 'w+').write("%s\n" % pid)
 	rolld(inc,s,client,url,psinfo)
-         
+def signal_handler(signum,frame):
+    print "agent is going down"
+    config=ConfigObj(config_file,encoding='UTF8')
+    pidfile=config['client']['pidfile']
+    try:
+        pf = open(pidfile, 'r')
+        pid = int(pf.read().strip())
+        pf.close()
+    except IOError:
+        pid = None
+    except SystemExit:
+        pid = None
+    if not pid:
+        message = "pidfile %s does not exist. Not running?\n"
+        sys.stderr.write(message % pidfile)
+
+        # Just to be sure. A ValueError might occur if the PID file is
+        # empty but does actually exist
+        if os.path.exists(pidfile):
+            os.remove(pidfile)
+    else:
+        if os.path.exists(pidfile):
+            os.remove(pidfile)
+
+    # Try killing the daemon process
+    try:
+        i = 0
+        while 1:
+            os.kill(pid, signal.SIGTERM)
+            time.sleep(0.1)
+            i = i + 1
+            if i % 10 == 0:
+                os.kill(pid, signal.SIGHUP)
+    except OSError as err:
+        if err.errno == errno.ESRCH:
+            if os.path.exists(pidfile):
+                os.remove(pidfile)
+        else:
+            print(str(err))
+            sys.exit(1)
+    print("Stopped")
+           
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='cmdbclient')
@@ -193,8 +239,8 @@ if __name__=='__main__':
                         datefmt='%a, %d %b %Y %H:%M:%S',
                         filename='myapp.log',
                         filemode='a')
-#    schedule.enter(interval,0,client_worker,(client_info,url,pslist)) 
-    pineMarten = pantalaimon('/var/run/agent.pid')
+    pineMarten = pantalaimon(pidfile)
+    signal.signal(signal.SIGINT,signal_handler)
     if action == "start":
         pineMarten.start(interval,schedule,client_info,url,pslist)
     elif action == "stop":
