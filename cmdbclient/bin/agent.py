@@ -43,6 +43,14 @@ class system_info(object):
         }
 
         return sysinfo
+    def get_portinfo(self):
+        checkport=commands.getstatusoutput('netstat -tnlp --inet')
+        if int(checkport[0]) == 0:
+            portinfolist=[]
+            for line in checkport[1].split("\n")[2:]:
+                portinfolist.append((line.split()[0],line.split()[3].split(":")[1],line.split()[6].split("/")[1]))
+            return portinfolist
+
     def get_disk_info(self):
         disks=psutil.disk_partitions()
         self.disk_info=[]
@@ -141,6 +149,7 @@ class system_info(object):
         self.systeminfo['disk_info'] = self.get_disk_info()
         self.systeminfo['processlist'] = self.get_process_info(*args,**kwargs)
         self.systeminfo['user_info'] = self.get_user_info()
+        self.systeminfo['port_info'] = self.get_portinfo()
         
         return self.systeminfo
     def post_system_info(self,url,data):
