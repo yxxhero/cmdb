@@ -16,7 +16,8 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls import url,include
 from django.contrib import admin
-from server.views import index,login,register,signin,logout,posthostinfo,deletehost,saltadmin,saltcontrol,showcmdhistory,filterhistory,saltconfig,codepublish,commitupdate,commitcount,hoststatus
+#from server.views import index,login,register,signin,logout,posthostinfo,deletehost,saltadmin,saltcontrol,showcmdhistory,filterhistory,saltconfig,codepublish,commitupdate,commitcount,hoststatus
+from server.views import index,login,register,signin,logout,posthostinfo,deletehost,saltadmin,saltcontrol,showcmdhistory,filterhistory,saltconfig,codepublish,commitupdate,commitcount
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$',index),
@@ -35,10 +36,10 @@ urlpatterns = [
     url(r'^codepublish/',codepublish),
     url(r'^putcodecommit/',commitupdate),
     url(r'^updatecount/',commitcount),
-    url(r'^hostinfoview/',hoststatus),
+#    url(r'^hostinfoview/',hoststatus),
 ]
-if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns += [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
-    ]
+#if settings.DEBUG:
+#    import debug_toolbar
+#    urlpatterns += [
+#        url(r'^__debug__/', include(debug_toolbar.urls)),
+#    ]

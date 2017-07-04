@@ -13,7 +13,7 @@ import salt.client
 from datetime import datetime
 from datetime import timedelta 
 import salt.config
-import zerorpc
+#import zerorpc
 import os
 class DateTimeEncoder(json.JSONEncoder):
     def default(self,o):
@@ -88,18 +88,28 @@ def register(request):
 def signin(request):
     Name=request.POST.get('Name',None)
     Password=request.POST.get('Password',None)
+    keep_logged=request.POST.get('keep_logged',None)
+    print request.POST
+    print keep_logged
     if all([Name,Password]):
         num=userinfo.objects.filter(Name=Name,Password=Password).count()
         if num>=1:
             request.session['login_info']={'username':Name}
+            if keep_logged:
+                request.session.set_expiry(86400)
+            else:
+                request.session.set_expiry(0)
             return redirect('/index/')
         else:
             return render_to_response('signin.html',{'message':"用户名或密码错误"})
     else:
         return render_to_response('signin.html')
 def logout(request):
-    del request.session['login_info']
-    return render_to_response('signin.html')
+    if request.session.get('login_info',None):
+        del request.session['login_info']
+        return render_to_response('signin.html')
+    else:
+        return render_to_response('signin.html')
 def posthostinfo(request):
     clinet_host_info=eval(request.POST.get('host_info',None))
     print clinet_host_info
@@ -169,20 +179,20 @@ def saltconfig(request):
 def saltadmin(request):
     username=request.session['login_info']['username']
     return render_to_response('saltadmin.html',{"username":username})
-@checklogin
-def hoststatus(request):
-    ip=request.GET.get('ip',None).split('/')[0]
-    c = zerorpc.Client()
-    addr='tcp://'+ip+':4242'
-    c.connect(addr)
-    sysinfo=c.get_sysinfo()
-    cpu=c.get_cpu_info()
-    mem=c.get_mem_info()
-    disklist=c.get_disk_info()
-    swapinfo=c.get_swap_info()
-    userinfo=c.get_user_info()
-    username=request.session['login_info']['username']
-    return render_to_response('hoststatus.html',{"userlist":userinfo,"swapinfo":swapinfo,"username":username,'hostip':ip,'cpu':cpu,"memory":mem,"sysinfo":sysinfo,"disklist":disklist})
+#@checklogin
+#def hoststatus(request):
+#    ip=request.GET.get('ip',None).split('/')[0]
+#    c = zerorpc.Client()
+#    addr='tcp://'+ip+':4242'
+#    c.connect(addr)
+#    sysinfo=c.get_sysinfo()
+#    cpu=c.get_cpu_info()
+#    mem=c.get_mem_info()
+#    disklist=c.get_disk_info()
+#    swapinfo=c.get_swap_info()
+#    userinfo=c.get_user_info()
+#    username=request.session['login_info']['username']
+#    return render_to_response('hoststatus.html',{"userlist":userinfo,"swapinfo":swapinfo,"username":username,'hostip':ip,'cpu':cpu,"memory":mem,"sysinfo":sysinfo,"disklist":disklist})
 @checklogin
 def filterhistory(request):
     st=request.POST.get("st",None)
